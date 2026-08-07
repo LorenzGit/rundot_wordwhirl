@@ -849,10 +849,17 @@ svg {
         box-shadow 0.16s ease;
 }
 .action-orb-hint {
+    position: relative;
     border-color: rgba(255, 199, 141, 0.5);
     box-shadow:
         0 6px 18px rgba(7, 23, 36, 0.3),
         0 0 18px rgba(255, 199, 141, 0.14);
+}
+.action-orb-hint-empty {
+    border-color: rgba(153, 225, 195, 0.45);
+    box-shadow:
+        0 6px 18px rgba(7, 23, 36, 0.3),
+        0 0 16px rgba(153, 225, 195, 0.16);
 }
 .game-actions button:active:not(:disabled),
 .action-orb:active:not(:disabled) {
@@ -872,8 +879,38 @@ svg {
 .action-orb-hint svg {
     stroke: var(--apricot);
 }
-.game-actions span {
-    /* Labels live in aria-label; keep visual chrome icon-first for hit clarity. */
+.action-orb-hint-empty svg {
+    stroke: var(--mint-light);
+}
+/* Visible stock on the hint orb — count while stock remains, +3 when ad refill is next. */
+.action-orb-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    z-index: 1;
+    display: grid;
+    min-width: 22px;
+    min-height: 22px;
+    place-items: center;
+    padding: 0 5px;
+    border: 1.5px solid rgba(14, 40, 57, 0.9);
+    border-radius: 999px;
+    background: var(--apricot);
+    color: var(--ink);
+    box-shadow: 0 2px 8px rgba(7, 23, 36, 0.35);
+    font-size: 11px;
+    font-weight: 1000;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    pointer-events: none;
+}
+.action-orb-hint-empty .action-orb-badge {
+    background: var(--mint);
+    min-width: 26px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+}
+.game-actions .visually-hidden {
     position: absolute;
     width: 1px;
     height: 1px;

@@ -1,6 +1,13 @@
 # WORDWHIRL QA evidence
 
-Date: 2026-08-06 · Version: 0.2.5 · Target: RUN public ship (RUNSHIP)
+Date: 2026-08-06 · Version: 0.2.6 · Target: RUN public ship (RUNSHIP)
+
+## Ship note (0.2.6)
+
+- Visible hint stock badge on the in-level hint orb (count while stock remains,
+  `+3` when ad refill is next). Visible UI version reads `package.json`
+  (`v0.2.6` on main menu).
+- Platform gameId: `U77YYcBCX44R1p3eAHVG`.
 
 ## Ship note (0.2.5)
 

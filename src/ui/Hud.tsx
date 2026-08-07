@@ -55,11 +55,11 @@ export default function Hud() {
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M4 7h3c5 0 5 10 10 10h3m-3-3 3 3-3 3M4 17h3c2 0 3-1.5 4-3.2M14 7.8C15 7.3 16 7 17 7h3m-3-3 3 3-3 3" />
                     </svg>
-                    <span>SHUFFLE</span>
+                    <span className="visually-hidden">SHUFFLE</span>
                 </button>
                 <button
                     type="button"
-                    className="action-orb action-orb-hint"
+                    className={`action-orb action-orb-hint${state.hints <= 0 ? " action-orb-hint-empty" : ""}`}
                     onClick={() => void requestHint()}
                     disabled={blocked || state.hintBusy}
                     aria-label={hintLabel()}
@@ -67,7 +67,10 @@ export default function Hud() {
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M9 18h6M10 21h4M8.5 14.5C7.5 13.5 7 12 7 10.5a5 5 0 0 1 10 0c0 1.5-.5 3-1.5 4-.8.8-1 1.3-1 1.5h-5c0-.2-.2-.7-1-1.5Z" />
                     </svg>
-                    <span>{state.hintBusy ? "…" : hintLabel()}</span>
+                    <span className="action-orb-badge" aria-hidden="true">
+                        {state.hintBusy ? "…" : state.hints > 0 ? formatNumber(state.hints) : "+3"}
+                    </span>
+                    <span className="visually-hidden">{hintLabel()}</span>
                 </button>
             </div>
 
