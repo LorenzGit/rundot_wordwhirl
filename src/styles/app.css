@@ -34,6 +34,12 @@ body,
     margin: 0;
     overflow: hidden;
 }
+#root {
+    /* Center the letterboxed playable frame on every orientation. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 body {
     background: #10263a;
     overscroll-behavior: none;
@@ -78,10 +84,17 @@ svg {
 #app-frame {
     position: relative;
     isolation: isolate;
+    /* Portrait letterbox: cap width so desktop shows sky rails. Size type
+       against this frame (cqi), never the full viewport — landscape phones
+       used to collapse to ~62dvh wide while titles still scaled with 10vw. */
     width: min(100vw, 460px, 62dvh);
     height: min(100dvh, 920px);
-    margin: auto;
+    max-width: 100vw;
+    max-height: 100dvh;
+    margin: 0;
     overflow: hidden;
+    container-type: inline-size;
+    container-name: game;
     background:
         linear-gradient(180deg, rgba(10, 28, 44, 0.16) 0%, rgba(12, 36, 52, 0.1) 42%, rgba(14, 40, 56, 0.32) 100%),
         var(--wordwhirl-sky, url("../assets/art/wordwhirl-sky-l01.jpg")) center / cover no-repeat;
@@ -89,16 +102,25 @@ svg {
     transition: background 0.45s ease;
 }
 
+/* Landscape: stop the portrait pillar from shrinking to ~240px on phones.
+   Prefer a usable card (~340–520px) so title, summary, and nav labels fit. */
+@media (orientation: landscape) {
+    #app-frame {
+        width: min(92vw, max(340px, min(520px, 100dvh * 1.08)));
+        height: min(100dvh, 920px);
+    }
+}
+
 .safe-frame {
-    padding-top: calc(clamp(14px, 2.4vh, 24px) + var(--safe-top));
-    padding-right: calc(clamp(14px, 4vw, 24px) + var(--safe-right));
-    padding-bottom: calc(clamp(14px, 2.4vh, 24px) + var(--safe-bottom));
-    padding-left: calc(clamp(14px, 4vw, 24px) + var(--safe-left));
+    padding-top: calc(clamp(14px, 2.4cqi, 24px) + var(--safe-top));
+    padding-right: calc(clamp(14px, 4cqi, 24px) + var(--safe-right));
+    padding-bottom: calc(clamp(14px, 2.4cqi, 24px) + var(--safe-bottom));
+    padding-left: calc(clamp(14px, 4cqi, 24px) + var(--safe-left));
 }
 .eyebrow {
     margin: 0;
     color: var(--mint-light);
-    font-size: clamp(10px, 2.6vw, 12px);
+    font-size: clamp(10px, 2.8cqi, 12px);
     font-weight: 1000;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -107,7 +129,7 @@ svg {
 .safety-note {
     margin: 0;
     color: rgba(255, 242, 215, 0.82);
-    font-size: clamp(13px, 3.6vw, 15px);
+    font-size: clamp(13px, 3.6cqi, 15px);
     font-weight: 700;
     line-height: 1.48;
 }
@@ -116,7 +138,7 @@ svg {
     border: 1px solid rgba(216, 255, 240, 0.23);
     border-radius: 18px;
     background: rgba(14, 38, 55, 0.52);
-    font-size: clamp(12px, 3.2vw, 14px);
+    font-size: clamp(12px, 3.2cqi, 14px);
 }
 .primary-button {
     width: 100%;
@@ -127,7 +149,7 @@ svg {
     box-shadow:
         0 5px 0 #477f73,
         0 12px 22px rgba(8, 26, 39, 0.2);
-    font-size: clamp(13px, 3.5vw, 16px);
+    font-size: clamp(13px, 3.5cqi, 16px);
     font-weight: 1000;
     letter-spacing: 0.06em;
 }
@@ -180,14 +202,15 @@ svg {
     animation: wind-drift 9s ease-in-out infinite;
 }
 .brand-block {
-    margin-top: clamp(12px, 5vh, 52px);
+    margin-top: clamp(8px, 4cqi, 52px);
     text-align: center;
     animation: rise-in 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .brand-block h1 {
     margin: 7px 0 2px;
     color: var(--paper);
-    font-size: clamp(35px, 10vw, 53px);
+    /* Frame-relative: full-viewport vw made "WORDWHIRL" read as "WORDW" in landscape. */
+    font-size: clamp(28px, 12cqi, 53px);
     font-weight: 1000;
     line-height: 0.94;
     letter-spacing: 0.06em;
@@ -198,7 +221,7 @@ svg {
 .brand-block > p:last-child {
     margin: 9px 0 0;
     color: rgba(255, 242, 215, 0.82);
-    font-size: clamp(11px, 3vw, 14px);
+    font-size: clamp(11px, 3.2cqi, 14px);
     font-weight: 900;
     letter-spacing: 0.08em;
 }
@@ -219,6 +242,7 @@ svg {
 .menu-summary > div:first-child {
     display: flex;
     min-width: 0;
+    flex: 1 1 auto;
     flex-direction: column;
 }
 .menu-summary span {
@@ -230,16 +254,17 @@ svg {
 }
 .menu-summary strong {
     overflow: hidden;
-    font-size: clamp(16px, 4.3vw, 20px);
+    font-size: clamp(15px, 4.6cqi, 20px);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 .spark-balance {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
     gap: 6px;
     color: var(--paper);
-    font-size: clamp(16px, 4.5vw, 21px);
+    font-size: clamp(15px, 4.8cqi, 21px);
     font-weight: 1000;
 }
 .spark-balance svg {
@@ -284,7 +309,7 @@ svg {
     letter-spacing: 0.16em;
 }
 .play-button strong {
-    font-size: clamp(19px, 5.2vw, 24px);
+    font-size: clamp(17px, 5.4cqi, 24px);
     letter-spacing: 0.045em;
 }
 .play-arrow {
@@ -297,7 +322,7 @@ svg {
 }
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
     margin-top: 17px;
     animation: rise-in 0.55s 0.2s both;
@@ -310,6 +335,7 @@ svg {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    padding: 8px 4px;
     border: 1px solid rgba(216, 255, 240, 0.22);
     border-radius: 18px;
     background: rgba(13, 40, 57, 0.66);
@@ -321,6 +347,7 @@ svg {
 .menu-grid svg {
     width: 23px;
     height: 23px;
+    flex: 0 0 auto;
     fill: none;
     stroke: var(--mint-light);
     stroke-width: 1.8;
@@ -328,9 +355,15 @@ svg {
     stroke-linejoin: round;
 }
 .menu-grid span {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
     font-size: 10px;
     font-weight: 1000;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    text-align: center;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 .menu-records {
@@ -377,7 +410,7 @@ svg {
 }
 .subscreen-header h2 {
     margin: 2px 0 0;
-    font-size: clamp(23px, 6.5vw, 31px);
+    font-size: clamp(23px, 6.5cqi, 31px);
     line-height: 1;
     letter-spacing: 0.04em;
 }
@@ -431,7 +464,7 @@ svg {
 .how-list h3,
 .shop-product h3 {
     margin: 2px 0 7px;
-    font-size: clamp(17px, 4.8vw, 21px);
+    font-size: clamp(17px, 4.8cqi, 21px);
 }
 .route-medallion {
     display: grid;
@@ -512,7 +545,7 @@ svg {
 .ad-policy-card p {
     margin: 0;
     color: rgba(255, 242, 215, 0.8);
-    font-size: clamp(13px, 3.5vw, 15px);
+    font-size: clamp(13px, 3.5cqi, 15px);
     line-height: 1.42;
 }
 .fair-play-card {
@@ -543,7 +576,7 @@ svg {
     border: 1px solid rgba(216, 255, 240, 0.2);
     border-radius: 17px;
     background: rgba(14, 40, 57, 0.66);
-    font-size: clamp(12px, 3.2vw, 14px);
+    font-size: clamp(12px, 3.2cqi, 14px);
     font-weight: 1000;
     letter-spacing: 0.04em;
 }
@@ -661,7 +694,7 @@ svg {
 }
 .price-line strong {
     color: var(--apricot);
-    font-size: clamp(18px, 5vw, 23px);
+    font-size: clamp(18px, 5cqi, 23px);
 }
 .price-line span,
 .pending-copy {
@@ -728,7 +761,7 @@ svg {
 }
 .level-title strong {
     display: block;
-    font-size: clamp(14px, 3.8vw, 17px);
+    font-size: clamp(14px, 3.8cqi, 17px);
     letter-spacing: 0.05em;
 }
 .hud-sparks {
@@ -748,7 +781,7 @@ svg {
     stroke-width: 1.5;
 }
 .hud-sparks strong {
-    font-size: clamp(13px, 3.6vw, 16px);
+    font-size: clamp(13px, 3.6cqi, 16px);
 }
 .tutorial-bubble {
     position: absolute;
@@ -762,7 +795,7 @@ svg {
     box-shadow:
         0 10px 30px rgba(8, 25, 39, 0.28),
         0 0 0 1px rgba(255, 242, 215, 0.4);
-    font-size: clamp(12px, 3.4vw, 14px);
+    font-size: clamp(12px, 3.4cqi, 14px);
     font-weight: 900;
     text-align: center;
     transform: translate(-50%, -50%);
@@ -866,7 +899,7 @@ svg {
     backdrop-filter: blur(7px);
 }
 .pause-overlay strong {
-    font-size: clamp(35px, 10vw, 50px);
+    font-size: clamp(35px, 10cqi, 50px);
     letter-spacing: 0.08em;
 }
 .pause-overlay small {
@@ -912,7 +945,7 @@ svg {
     border-radius: 999px;
     background: var(--mint);
     color: var(--ink);
-    font-size: clamp(11px, 3vw, 13px);
+    font-size: clamp(11px, 3cqi, 13px);
     font-weight: 1000;
     letter-spacing: 0.1em;
 }
@@ -994,7 +1027,7 @@ svg {
 .clear-celebrate-title {
     position: relative;
     color: var(--paper);
-    font-size: clamp(18px, 5vw, 22px);
+    font-size: clamp(18px, 5cqi, 22px);
     font-weight: 1000;
     letter-spacing: 0.04em;
 }
@@ -1092,7 +1125,7 @@ svg {
 }
 .result-card h2 {
     margin: 5px 0 16px;
-    font-size: clamp(28px, 8vw, 38px);
+    font-size: clamp(28px, 8cqi, 38px);
     letter-spacing: 0.04em;
 }
 .result-stats {
@@ -1153,7 +1186,7 @@ svg {
 }
 .loading-screen h1 {
     margin: 0;
-    font-size: clamp(31px, 9vw, 45px);
+    font-size: clamp(31px, 9cqi, 45px);
     letter-spacing: 0.08em;
 }
 .loading-screen p {
@@ -1195,7 +1228,7 @@ svg {
     bottom: 14px;
 }
 .loading-track {
-    width: min(70vw, 280px);
+    width: min(70cqi, 280px);
     height: 14px;
     padding: 3px;
     border: 2px solid rgba(255, 242, 215, 0.65);
@@ -1223,7 +1256,7 @@ svg {
     border-radius: 18px;
     background: rgba(12, 38, 55, 0.96);
     box-shadow: 0 14px 36px rgba(5, 18, 30, 0.42);
-    font-size: clamp(12px, 3.2vw, 14px);
+    font-size: clamp(12px, 3.2cqi, 14px);
     font-weight: 1000;
     letter-spacing: 0.03em;
     animation: toast-in 0.32s cubic-bezier(0.2, 0.9, 0.2, 1.1) both;
@@ -1395,7 +1428,7 @@ svg {
         margin-top: 4px;
     }
     .brand-block h1 {
-        font-size: clamp(31px, 9vw, 42px);
+        font-size: clamp(28px, 10cqi, 42px);
     }
     .brand-block > p:last-child {
         display: none;
@@ -1430,6 +1463,68 @@ svg {
     }
     .tutorial-bubble {
         top: 36%;
+    }
+}
+
+/* Phone on its side: short height + wide letterbox. Compact the menu column so
+   brand, CTA, and four nav tiles all fit without clipping or colliding labels. */
+@media (orientation: landscape) and (max-height: 520px) {
+    .menu-shell {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+    .brand-block {
+        margin-top: 2px;
+    }
+    .brand-block h1 {
+        font-size: clamp(26px, 9cqi, 36px);
+        letter-spacing: 0.04em;
+    }
+    .brand-block .eyebrow {
+        letter-spacing: 0.12em;
+        font-size: 9px;
+    }
+    .menu-summary {
+        margin-bottom: 6px;
+        padding: 8px 12px;
+    }
+    .menu-summary strong {
+        font-size: clamp(14px, 4cqi, 17px);
+    }
+    .play-button {
+        min-height: 58px;
+    }
+    .play-button strong {
+        font-size: clamp(15px, 4.6cqi, 19px);
+    }
+    .play-arrow {
+        font-size: 22px;
+        right: 14px;
+    }
+    .menu-grid {
+        gap: 6px;
+        margin-top: 8px;
+    }
+    .menu-grid button {
+        min-height: 52px;
+        gap: 4px;
+        padding: 6px 2px;
+        border-radius: 14px;
+    }
+    .menu-grid svg {
+        width: 20px;
+        height: 20px;
+    }
+    .menu-grid span {
+        font-size: 10px;
+        letter-spacing: 0;
+    }
+    .menu-records {
+        margin-top: 6px;
+        font-size: 9px;
+    }
+    .menu-records strong {
+        font-size: 11px;
     }
 }
 

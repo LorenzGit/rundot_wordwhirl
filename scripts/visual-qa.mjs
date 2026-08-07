@@ -11,6 +11,7 @@ const port = 5395;
 const viewports = [
     { name: "phone-small", width: 320, height: 568, scale: 2 },
     { name: "phone-tall", width: 390, height: 844, scale: 2 },
+    { name: "phone-landscape", width: 844, height: 390, scale: 2 },
     { name: "tablet", width: 768, height: 1024, scale: 2 },
     { name: "tablet-wide", width: 1024, height: 768, scale: 1 },
     { name: "desktop", width: 1440, height: 900, scale: 1 },

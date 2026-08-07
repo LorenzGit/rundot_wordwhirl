@@ -27,6 +27,7 @@
 | Moment | Sound | Haptic | Required visual feedback |
 | --- | --- | --- | --- |
 | UI tap | soft sine tick | light when supported/enabled | pressed/focus state |
+| Letter connect | short letter tick | light | selected orb, path glow, micro spark |
 | Start | short rising triangle | light | phase transition |
 | Bounce | quiet rounded ping, rate-limited | none | movement, score, particles |
 | Reward/milestone | rising consonant cue | success | reward state/effect |

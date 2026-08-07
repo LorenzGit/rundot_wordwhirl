@@ -1,6 +1,13 @@
 # WORDWHIRL QA evidence
 
-Date: 2026-08-06 · Version: 0.2.4 · Target: RUN public ship (RUNSHIP)
+Date: 2026-08-06 · Version: 0.2.5 · Target: RUN public ship (RUNSHIP)
+
+## Ship note (0.2.5)
+
+- Landscape letterbox + frame-relative type so phone landscape no longer clips
+  the title or collides menu labels; letter-connect light haptics on drag and
+  keyboard. Visible UI version reads `package.json` (`v0.2.5` on main menu).
+- Platform gameId: `U77YYcBCX44R1p3eAHVG`.
 
 ## Ship note (0.2.4)
 

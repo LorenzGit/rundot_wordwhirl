@@ -12,6 +12,7 @@ import { recordGesture, submitWord } from "./gameController.ts";
 import { crosswordFor, solvedCellKeys, type CrosswordCell } from "./words/crossword.ts";
 import { levelForNumber } from "./words/levels.ts";
 import { store } from "../state/store.ts";
+import { runtimeServices } from "../systems/runtimeServices.ts";
 import { createParticleEmitter } from "./particles.ts";
 import { NoiseRandom } from "./noiseRandom.ts";
 import { createTweenController, ease } from "./tween.ts";
@@ -278,6 +279,7 @@ export function createWordScene(app: Application, stage: Stage): Scene {
                 selected = [originalIndex];
                 recordGesture();
                 audioManager.play("letter");
+                void runtimeServices.haptic("light");
                 updateTrace();
             });
             lettersLayer.addChild(group);
@@ -511,6 +513,8 @@ export function createWordScene(app: Application, stage: Stage): Scene {
             if (distance > letterRadius * 1.15 || selected.includes(view.originalIndex)) continue;
             selected.push(view.originalIndex);
             audioManager.play("letter");
+            // Light tick on each newly connected letter; respects settings + host capability.
+            void runtimeServices.haptic("light");
             updateTrace();
             if (!reducedMotion) {
                 emitter.burst(wheelCenterX + view.x, wheelCenterY + view.y, {
@@ -568,6 +572,7 @@ export function createWordScene(app: Application, stage: Stage): Scene {
         selected.push(originalIndex);
         recordGesture();
         audioManager.play("letter");
+        void runtimeServices.haptic("light");
         updateTrace();
         event.preventDefault();
     }
