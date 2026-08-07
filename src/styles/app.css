@@ -1519,7 +1519,9 @@ svg {
     }
     .brand-block .eyebrow {
         letter-spacing: 0.12em;
-        font-size: 9px;
+        /* 10px is the project's DOM-text floor (scripts/visual-qa.mjs); the
+           shell scrolls on this breakpoint, so the extra pixel cannot clip. */
+        font-size: 10px;
     }
     .menu-summary {
         margin-bottom: 6px;
@@ -1558,7 +1560,7 @@ svg {
     }
     .menu-records {
         margin-top: 6px;
-        font-size: 9px;
+        font-size: 10px;
     }
     .menu-records strong {
         font-size: 11px;

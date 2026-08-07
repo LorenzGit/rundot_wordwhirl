@@ -1,6 +1,31 @@
 # WORDWHIRL QA evidence
 
-Date: 2026-08-06 · Version: 0.2.6 · Target: RUN public ship (RUNSHIP)
+Date: 2026-08-07 · Version: 0.2.7 · Target: RUN public ship (RUNSHIP)
+
+## Ship note (0.2.7)
+
+- Checkout correctness pass. `shop.purchase` rejections now carry the host's
+  machine error code instead of being swallowed, so a dismissed Run Bits top-up
+  sheet or an empty wallet reads as a clean, uncharged decline rather than
+  "ORDER PENDING". A grant requires `order.status === "fulfilled"`, not just
+  `success`, so an idempotency replay of an unsettled order can no longer pay
+  out. A pending intent for one product no longer blocks checkout for another,
+  and a stale intent is retired after 15 minutes — but only after a successful
+  order-history read that missed it, and only on a player-initiated purchase
+  (a passive resume check stays read-only).
+- Rewarded-ad readiness probe budget raised 2s -> 12s. On web the host resolves
+  readiness through its consent manager (up to 5s) and ad-script load (up to
+  5s); the old budget expired during the first cold probe and reported "no ad"
+  on a host that was merely warming up.
+- Short-landscape `.brand-block .eyebrow` and `.menu-records` raised 9px -> 10px
+  to clear the project's own DOM-text floor. This failure predates 0.2.7 (it
+  reproduces on the shipped 0.2.6 tree).
+- New regression cover wired into `npm test`:
+  `scripts/test-checkout-classification.ts` and
+  `scripts/test-purchase-coordinator.ts` (7 coordinator scenarios, verified to
+  fail against the pre-fix coordinator).
+- Visible UI version reads `package.json` (`v0.2.7` on main menu).
+- Platform gameId: `U77YYcBCX44R1p3eAHVG`.
 
 ## Ship note (0.2.6)
 

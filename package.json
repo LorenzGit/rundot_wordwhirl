@@ -1,6 +1,6 @@
 {
   "name": "wordwhirl",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "WORDWHIRL — a portrait swipe-word adventure for RUN.world, built with PixiJS 8 and a WebGPU-first renderer.",
   "private": true,
   "license": "SEE LICENSE IN LICENSE.md",
@@ -22,7 +22,7 @@
     "format:check": "biome format .",
     "lint": "biome lint src scripts vite.config.js --diagnostic-level=error --max-diagnostics=none",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/test-noise-random.mjs && node scripts/check-player-number-formatting.mjs && node --experimental-strip-types scripts/simulate-wordwhirl.ts && node scripts/check-game.mjs",
+    "test": "node scripts/test-noise-random.mjs && node scripts/check-player-number-formatting.mjs && node --experimental-strip-types scripts/test-checkout-classification.ts && node --experimental-strip-types scripts/test-purchase-coordinator.ts && node --experimental-strip-types scripts/simulate-wordwhirl.ts && node scripts/check-game.mjs",
     "words:sync": "node scripts/sync-safe-words.mjs",
     "simulate": "node --experimental-strip-types scripts/simulate-wordwhirl.ts",
     "thumbnail": "node scripts/make-thumbnail.mjs",

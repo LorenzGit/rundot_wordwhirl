@@ -4,6 +4,7 @@ import { HINT_ECONOMY } from "../config/platform.ts";
 import { getRunCapabilities } from "../sdk/runSdk.ts";
 import { formatNumber } from "../systems/localization.ts";
 import {
+    checkoutDeclineReason,
     productView,
     purchaseProduct,
     reconcilePendingPurchase,
@@ -15,6 +16,18 @@ import { recordHintPackSelected, recordPurchaseFunnel, recordScreenView } from "
 import { runtimeServices } from "../systems/runtimeServices.ts";
 import { store, useStore } from "../state/store.ts";
 import MenuScreenLayout from "./MenuScreenLayout.tsx";
+
+/**
+ * A decline the host explained is worth saying plainly — "PURCHASE FAILED" on
+ * an empty wallet reads as a broken shop rather than a balance the player can
+ * do something about.
+ */
+const DECLINE_TOASTS: Readonly<Record<"insufficient_funds" | "already_owned" | "rate_limited" | "generic", string>> = {
+    insufficient_funds: "NOT ENOUGH RUN BITS",
+    already_owned: "ALREADY OWNED",
+    rate_limited: "TOO MANY ORDERS — TRY AGAIN SHORTLY",
+    generic: "PURCHASE FAILED",
+};
 
 function PriceLine({
     productId,
@@ -95,7 +108,7 @@ export default function ShopScreen() {
             void runtimeServices.haptic("success");
         } else if (outcome.status === "cancelled") store.patch({ toast: "CHECKOUT CANCELLED" });
         else if (outcome.status === "unknown") store.patch({ toast: "ORDER PENDING — SAFE TO RETRY LATER" });
-        else store.patch({ toast: "PURCHASE FAILED" });
+        else store.patch({ toast: DECLINE_TOASTS[checkoutDeclineReason(outcome.error) ?? "generic"] });
     };
 
     const auroraPrices = priceLabel("aurora_compass", aurora);
