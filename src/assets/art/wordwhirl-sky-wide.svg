@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Wide storm-lit storybook sky framing a calm central play area">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#13243e"/><stop offset="0.5" stop-color="#315e72"/><stop offset="1" stop-color="#e99d6f"/>
+    </linearGradient>
+    <radialGradient id="sun"><stop offset="0" stop-color="#fff7cd" stop-opacity="0.88"/><stop offset="1" stop-color="#ffd39c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#345c54"/><stop offset="1" stop-color="#132a37"/></linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1290" cy="205" r="235" fill="url(#sun)"/>
+  <g fill="#f8ead2" opacity="0.72">
+    <path d="M-80 215c117-87 250-62 326 25 83-94 231-69 277 47 76-35 174 14 182 100H-80z"/>
+    <path d="M1060 410c60-70 165-70 222-6 69-80 203-30 215 67 73-24 156 27 145 109h-582z" opacity="0.58"/>
+  </g>
+  <g fill="none" stroke="#c8f4df" stroke-linecap="round">
+    <path d="M-60 145c260 168 475 93 469-32" stroke-width="15" opacity="0.25"/>
+    <path d="M1180 80c-172 165-135 303 88 293s291 93 374 187" stroke-width="13" opacity="0.27"/>
+    <path d="M-40 670c219-111 409-69 490 45" stroke-width="11" opacity="0.24"/>
+  </g>
+  <g fill="url(#land)" stroke="#102638" stroke-width="8">
+    <path d="M-70 560c210-151 448-135 608 6l-50 178-167 98-262-52-129-119z"/>
+    <path d="M1140 505c194-109 407-78 548 61l-29 167-157 99-234-47-128-115z"/>
+  </g>
+  <g stroke="#cbe7c8" stroke-width="9" stroke-linecap="round">
+    <path d="M105 555c64-121 129-165 193-174m-89 81c-52-34-104-35-153-2m184-42c52-31 102-31 150 0"/>
+    <path d="M1317 500c53-109 105-146 159-153m-75 72c-48-28-90-27-126 0m156-35c42-24 81-23 119 3"/>
+  </g>
+  <g fill="#ffdda1" stroke="#132f3b" stroke-width="8">
+    <path d="M300 375l31-76 31 76-31 49z"/><path d="M1460 341l28-67 28 67-28 45z"/>
+  </g>
+  <g fill="#d9fff0"><circle cx="570" cy="132" r="5"/><circle cx="813" cy="90" r="4"/><circle cx="1005" cy="236" r="5"/><circle cx="744" cy="690" r="4"/></g>
+</svg>

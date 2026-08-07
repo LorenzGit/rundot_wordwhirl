@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" role="img" aria-label="Storm-lit storybook sky with floating islands and curling wind paths">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0.75" y2="1">
+      <stop offset="0" stop-color="#14263f"/>
+      <stop offset="0.46" stop-color="#315e72"/>
+      <stop offset="1" stop-color="#efae78"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff8cf" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#f6cb83" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="island" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#315952"/>
+      <stop offset="1" stop-color="#172b37"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="14"/></filter>
+  </defs>
+  <rect width="900" height="1600" fill="url(#sky)"/>
+  <circle cx="682" cy="292" r="210" fill="url(#sun)"/>
+  <g fill="#f8ead2" opacity="0.78">
+    <path d="M-80 390c88-63 169-50 235 6 47-67 165-77 232 10 78-40 187-9 206 87H-80z"/>
+    <path d="M465 550c48-50 116-55 164-6 50-57 143-36 166 32 64-30 142 24 128 95H465z" opacity="0.55"/>
+  </g>
+  <g fill="none" stroke="#c8f4df" stroke-linecap="round">
+    <path d="M-40 240C210 75 378 213 286 347S200 585 488 518 889 535 940 414" stroke-width="17" opacity="0.22"/>
+    <path d="M-44 1000c190-118 326-39 271 83s112 228 340 112 328-79 385-12" stroke-width="13" opacity="0.26"/>
+    <path d="M64 718c110-76 210-61 270 15" stroke-width="8" opacity="0.32"/>
+  </g>
+  <g fill="url(#island)" stroke="#102638" stroke-width="8">
+    <path d="M-62 822c152-99 340-110 472-16l-38 151-102 92-214-36-118-111z"/>
+    <path d="M546 852c126-77 271-59 369 14l-18 130-97 80-151-36-96-92z"/>
+    <path d="M115 1270c199-118 450-97 609 32l-49 167-147 83-261-31-139-101z"/>
+  </g>
+  <g stroke="#cbe7c8" stroke-width="9" stroke-linecap="round">
+    <path d="M63 819c52-90 92-126 123-127m-31 74c-34-26-65-34-93-23m122-15c31-29 68-38 104-27"/>
+    <path d="M661 850c29-71 62-103 98-115m-36 64c-30-18-57-21-84-6m102-12c30-17 57-18 83-6"/>
+    <path d="M300 1280c59-118 111-154 166-165m-76 74c-50-33-98-33-141-5m168-40c43-27 86-30 127-8"/>
+  </g>
+  <g fill="#ffdda1" stroke="#132f3b" stroke-width="8">
+    <path d="M185 684l28-68 28 68-28 46z"/>
+    <path d="M755 725l25-60 25 60-25 41z"/>
+    <path d="M460 1106l32-78 33 78-33 51z"/>
+  </g>
+  <g fill="#d9fff0">
+    <circle cx="105" cy="170" r="5"/><circle cx="214" cy="282" r="4"/><circle cx="520" cy="148" r="5"/>
+    <circle cx="788" cy="454" r="4"/><circle cx="400" cy="650" r="5"/><circle cx="100" cy="1130" r="4"/>
+  </g>
+  <ellipse cx="450" cy="1440" rx="390" ry="115" fill="#101e32" opacity="0.3" filter="url(#soft)"/>
+</svg>

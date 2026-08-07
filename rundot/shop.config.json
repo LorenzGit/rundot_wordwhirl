@@ -1,0 +1,42 @@
+{
+  "items": [
+    {
+      "itemId": "wordwhirl_aurora_compass_pack",
+      "name": "Aurora Compass",
+      "description": "Permanently unlocks the Aurora board and letter-wheel theme. Every puzzle remains playable without it.",
+      "category": "non_consumable",
+      "price": { "type": "bucks", "value": "199" },
+      "entitlements": [{ "entitlementId": "wordwhirl_aurora_compass", "quantity": 1, "consumable": false }],
+      "assets": {},
+      "unique": true,
+      "active": true,
+      "regions": [],
+      "refundEligible": true,
+      "refundWindowHours": 24,
+      "tags": ["wordwhirl", "theme", "permanent"],
+      "sortOrder": 1,
+      "releasedAt": null,
+      "expiresAt": null
+    },
+    {
+      "itemId": "wordwhirl_hint_pack_30",
+      "name": "Hint Pack (30)",
+      "description": "Adds 30 letter hints to your global stock. Hints reveal one unsolved cell each.",
+      "category": "consumable",
+      "price": { "type": "bucks", "value": "200" },
+      "entitlements": [{ "entitlementId": "wordwhirl_hints", "quantity": 30, "consumable": true }],
+      "assets": {},
+      "unique": false,
+      "active": true,
+      "regions": [],
+      "refundEligible": true,
+      "refundWindowHours": 24,
+      "tags": ["wordwhirl", "hints", "consumable"],
+      "sortOrder": 2,
+      "releasedAt": null,
+      "expiresAt": null
+    }
+  ],
+  "sales": [],
+  "collections": []
+}

@@ -1,0 +1,25 @@
+{
+  "client": {
+    "values": {
+      "wordwhirl_monetization": {
+        "enabled": true,
+        "purchasesEnabled": true,
+        "rewardedAdsEnabled": true,
+        "placements": {
+          "hint_reveal": {
+            "enabled": true,
+            "cooldownSeconds": 20,
+            "sessionCap": 3,
+            "dailyCap": 5
+          }
+        },
+        "products": {
+          "aurora_compass": { "enabled": true }
+        }
+      }
+    },
+    "overrides": [],
+    "experiments": []
+  },
+  "server": { "values": {}, "overrides": [] }
+}
