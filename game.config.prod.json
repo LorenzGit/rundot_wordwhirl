@@ -1,8 +1,8 @@
 {
-  "gameId": "REPLACE_WITH_RUN_GAME_ID",
+  "gameId": "U77YYcBCX44R1p3eAHVG",
   "relativePathToDistFolder": "dist",
   "usesPreloader": false,
-  "orientation": "Portrait",
+  "orientation": "portrait",
   "keywords": ["word", "crossword", "swipe", "relaxing", "puzzle"],
   "kitId": null
 }

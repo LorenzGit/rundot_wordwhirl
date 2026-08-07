@@ -226,6 +226,18 @@ export function createWordScene(app: Application, stage: Stage): Scene {
         syncLabelPill();
     }
 
+    /**
+     * Where the win celebration launches from.
+     *
+     * The clear/results card slides up over the bottom 33-46% of the screen
+     * (46% on a 320x568 phone), and the wheel sits inside that band — confetti
+     * fired from the wheel is spawned entirely behind the card and never seen.
+     * Launch from the upper-middle instead so the arc plays in open sky.
+     */
+    function celebrateOriginY(): number {
+        return Math.min(wheelCenterY - 40, stage.designHeight() * 0.42);
+    }
+
     function publishQaGeometry(): void {
         if (!import.meta.env.DEV) return;
         window.__wordwhirlQaGeometry = () => ({
@@ -236,6 +248,7 @@ export function createWordScene(app: Application, stage: Stage): Scene {
                 x: wheelCenterX + view.group.x,
                 y: wheelCenterY + view.group.y,
             })),
+            particles: emitter.sample(),
         });
     }
 
@@ -384,8 +397,9 @@ export function createWordScene(app: Application, stage: Stage): Scene {
                         lifeMaxMs: 480,
                         speedMinPxPerSec: 40,
                         speedMaxPxPerSec: 160,
-                        radiusMinPx: 2,
-                        radiusMaxPx: 5,
+                        radiusMinPx: 4,
+                        radiusMaxPx: 10,
+                        gravityPxPerSec2: 220,
                     },
                 );
             }
@@ -506,8 +520,10 @@ export function createWordScene(app: Application, stage: Stage): Scene {
                     lifeMaxMs: 320,
                     speedMinPxPerSec: 20,
                     speedMaxPxPerSec: 90,
-                    radiusMinPx: 1.5,
-                    radiusMaxPx: 3.5,
+                    radiusMinPx: 2.5,
+                    radiusMaxPx: 6,
+                    // Near-weightless: this sparkle should hang on the orb, not drop off it.
+                    gravityPxPerSec2: 80,
                 });
             }
             break;
@@ -625,10 +641,16 @@ export function createWordScene(app: Application, stage: Stage): Scene {
             if (feedback?.tone === "bad" && !reducedMotion) shakeLife = 0.28;
             if ((feedback?.tone === "good" || feedback?.tone === "bonus") && !reducedMotion) {
                 emitter.burst(wheelCenterX, wheelCenterY - wheelRadius - 45, {
-                    burst: feedback.tone === "bonus" ? 16 : 11,
+                    burst: feedback.tone === "bonus" ? 18 : 13,
                     hue: feedback.tone === "bonus" ? 38 : 150,
                     lifeMinMs: 280,
                     lifeMaxMs: 620,
+                    // The sky paintings are busy; 2-6 unit dots disappear into them.
+                    speedMinPxPerSec: 90,
+                    speedMaxPxPerSec: 330,
+                    radiusMinPx: 5,
+                    radiusMaxPx: 12,
+                    gravityPxPerSec2: 380,
                 });
             }
         }
@@ -637,15 +659,23 @@ export function createWordScene(app: Application, stage: Stage): Scene {
             lastResult = Boolean(state.result);
             if (state.result && !reducedMotion) {
                 celebrateLife = 1.7;
-                emitter.burst(wheelCenterX, wheelCenterY - 40, {
-                    burst: 28,
+                emitter.burst(wheelCenterX, celebrateOriginY(), {
+                    burst: 34,
                     hue: 150,
-                    lifeMinMs: 420,
-                    lifeMaxMs: 900,
-                    speedMinPxPerSec: 80,
-                    speedMaxPxPerSec: 340,
-                    radiusMinPx: 2,
-                    radiusMaxPx: 7,
+                    lifeMinMs: 520,
+                    lifeMaxMs: 1050,
+                    speedMinPxPerSec: 140,
+                    speedMaxPxPerSec: 520,
+                    radiusMinPx: 5,
+                    radiusMaxPx: 13,
+                    // Lighter drag than the default so the fan actually spreads
+                    // across the sky before gravity takes it back down.
+                    dragPerSec: 0.62,
+                    // Fire a wide upward fan rather than a ring, so the confetti
+                    // climbs into open sky instead of straight into the card.
+                    directionRad: -Math.PI / 2,
+                    arcRad: Math.PI * 1.2,
+                    gravityPxPerSec2: 620,
                 });
                 emitter.burst(stage.designWidth() / 2, boardLayer.y, {
                     burst: 18,
@@ -695,13 +725,14 @@ export function createWordScene(app: Application, stage: Stage): Scene {
             celebratePulse += dt;
             if (!reducedMotion && celebrateLife > 0.4 && celebratePulse >= 0.12) {
                 celebratePulse = 0;
-                emitter.burst(wheelCenterX + fxRandom.float(-90, 90), wheelCenterY - 80 + fxRandom.float(-30, 30), {
+                emitter.burst(wheelCenterX + fxRandom.float(-140, 140), celebrateOriginY() + fxRandom.float(-40, 40), {
                     burst: 3,
                     hue: fxRandom.float(0, 1) > 0.5 ? 150 : 38,
                     lifeMinMs: 240,
                     lifeMaxMs: 480,
                     speedMinPxPerSec: 30,
                     speedMaxPxPerSec: 120,
+                    gravityPxPerSec2: 160,
                 });
             }
         }

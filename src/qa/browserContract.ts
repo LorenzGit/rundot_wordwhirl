@@ -26,6 +26,7 @@ declare global {
             designWidth: number;
             designHeight: number;
             letters: Array<{ letter: string; x: number; y: number }>;
+            particles: Array<{ x: number; y: number; vy: number; alpha: number; radius: number }>;
         };
     }
 }

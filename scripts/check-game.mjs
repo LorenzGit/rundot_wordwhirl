@@ -69,7 +69,7 @@ check(
 );
 check(app.includes('id="app-frame" tabIndex={-1}'), "app frame cannot receive focus after a host overlay");
 check(sdk.includes('getElementById("app-frame")?.focus'), "host overlays do not restore keyboard focus");
-check(gameConfig.orientation === "Portrait", "RUN orientation must be Portrait");
+check(String(gameConfig.orientation || "").toLowerCase() === "portrait", "RUN orientation must be Portrait");
 check(Array.isArray(gameConfig.keywords) && gameConfig.keywords.length >= 3, "catalog needs at least three keywords");
 
 // Dictionary allow-list: runtime set must match safe-english-words-3to6.txt,

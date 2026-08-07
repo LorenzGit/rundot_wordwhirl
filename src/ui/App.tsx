@@ -87,8 +87,10 @@ export default function App() {
     }, [skyCss, skyLevel]);
 
     // Recover a fully-solved board with no ephemeral result (save/reload dead end).
+    // Re-run when `level` changes so a mid-session route advance is covered.
     useEffect(() => {
         if (phase !== "playing") return;
+        void level;
         ensureLevelResult({ grantRewards: false });
     }, [phase, level]);
 

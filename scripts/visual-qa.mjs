@@ -108,6 +108,57 @@ try {
     await page.waitForFunction(() => window.__gameQa.snapshot().result !== null, null, { timeout: 4_000 });
     evidence.behaviour.swipeCompletesLevel = true;
 
+    // The level clear fires the celebration burst. Sample it frame by frame:
+    // a unit mismatch in the particle integrator reads as normal particle
+    // counts but absurd velocities, so assert on motion, not just presence.
+    const particles = await page.evaluate(
+        () =>
+            new Promise((resolve) => {
+                const start = performance.now();
+                const samples = [];
+                let peak = 0;
+                const step = () => {
+                    const data = window.__wordwhirlQaGeometry();
+                    peak = Math.max(peak, data.particles.length);
+                    samples.push(...data.particles);
+                    if (performance.now() - start < 1500) requestAnimationFrame(step);
+                    else
+                        resolve({
+                            designWidth: data.designWidth,
+                            designHeight: data.designHeight,
+                            cssPerDesignUnit: window.innerHeight / data.designHeight,
+                            peak,
+                            total: samples.length,
+                            offscreen: samples.filter(
+                                (p) =>
+                                    p.x < -60 ||
+                                    p.x > data.designWidth + 60 ||
+                                    p.y < -60 ||
+                                    p.y > data.designHeight + 60,
+                            ).length,
+                            maxSpeed: Math.max(0, ...samples.map((p) => Math.abs(p.vy))),
+                            maxRadius: Math.max(0, ...samples.map((p) => p.radius)),
+                        });
+                };
+                requestAnimationFrame(step);
+            }),
+    );
+    const offscreenShare = particles.total ? particles.offscreen / particles.total : 1;
+    const maxRadiusCss = particles.maxRadius * particles.cssPerDesignUnit;
+    if (particles.peak < 20) problems.push(`behaviour: celebration emitted only ${particles.peak} particles`);
+    if (offscreenShare > 0.05)
+        problems.push(`behaviour: ${(offscreenShare * 100).toFixed(0)}% of particle frames rendered offscreen`);
+    if (particles.maxSpeed > 3000)
+        problems.push(`behaviour: particle speed peaked at ${Math.round(particles.maxSpeed)} units/s`);
+    if (maxRadiusCss < 2)
+        problems.push(`behaviour: largest particle is only ${maxRadiusCss.toFixed(1)} CSS px and will not read`);
+    evidence.behaviour.particles = {
+        peak: particles.peak,
+        offscreenPct: +(offscreenShare * 100).toFixed(1),
+        maxSpeedUnitsPerSec: Math.round(particles.maxSpeed),
+        maxRadiusCssPx: +maxRadiusCss.toFixed(1),
+    };
+
     await page.evaluate(() => window.__gameQa.seedLevel(2));
     await page.waitForTimeout(450);
     await page.keyboard.type("WON");

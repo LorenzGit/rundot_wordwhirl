@@ -1,6 +1,12 @@
 # WORDWHIRL QA evidence
 
-Date: 2026-08-06 · Version: 0.1.1 · Target: local pre-initialization build
+Date: 2026-08-06 · Version: 0.2.4 · Target: RUN public ship (RUNSHIP)
+
+## Ship note (0.2.4)
+
+- Patch bump for public RUNSHIP after private `v1.0.0` and particle-feedback
+  polish. Visible UI version reads `package.json` (`v0.2.4` on main menu).
+- Platform gameId: `U77YYcBCX44R1p3eAHVG`.
 
 ## Automated evidence
 
