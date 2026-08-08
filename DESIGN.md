@@ -7,18 +7,19 @@
 - Player fantasy / audience / orientation / session: restore words to a storm-tossed sky atlas; casual word-puzzle players; portrait-first; 2–5 minute sessions.
 - Core loop / first action: drag through the letter compass to form a word, place it in the compact crossword, collect Sparks from extra words, then ride the cleared windway onward.
 - First 10 minutes: level 1 teaches one three-letter swipe; levels 2–3 stay on three-letter crossings; levels 4–6 introduce four-letter words; free-hint value shows once the player has a few clears; an invalid word is a soft wobble with instant retry.
-- Goals: clear the current grid; complete a named route of twelve handcrafted skies; build lifetime Words Found and Perfect Route records. Later content adds routes through typed level data.
+- Goals: clear the current grid; complete named three-level routes; build lifetime Words Found and Perfect Route records. Progression is **unbounded** — levels 1–12 are the authored teaching sequence, level 13 onward is generated at runtime from a frozen wheel table.
 - First-session win / stopping point / return promise: a solved grid within the first minute; every result card is a clean stopping point; returning resumes the exact current puzzle and its revealed cells.
 - Controls / comfort: pointer or touch drag, physical keyboard fallback, free shuffle, 44px DOM actions, readable high-contrast labels, separate music/SFX/haptics settings, reduced-motion treatment.
-- Difficulty / RNG: curated deterministic levels; no gameplay randomness. Difficulty grows through **word-length bands**, wheel size, and overlapping word count — not timers or lives.
+- Difficulty / RNG: deterministic levels; no gameplay randomness. Generated levels are a **pure function of the level number** — no RNG, clock, or stored state — so every player gets the same level 847 forever. Difficulty grows through **word-length bands**, then wheel pool richness and answer count.
   - Levels 1–3: **3-letter words only**
   - Levels 4–6: **3–4 letter** words
   - Levels 7–9: **3–5 letter** words
-  - Levels 10–12: **3–6 letter** words (hardest)
+  - Levels 10–12: **3–6 letter** words (end of the authored sequence)
+  - Levels 13+: generated. The allow-list stops at six letters, so the word-length lever is spent; difficulty ramps instead through wheel pool size (the table is ranked easiest-first) and answer count (4 → 8). Boards are capped at 9×7 so cells never shrink below what the authored levels already demand at 320×568.
 - Economy: Sparks come from level completion and first-time bonus words (cosmetic score currency). **Hints are a global stock**: start with **3**; each hint reveals one cell. When stock is 0, an optional rewarded ad grants **+3**, or a Shop pack grants **+30 for 200 RB**. Sparks no longer buy hints. Shuffle is always free.
-- Dictionary: every answer and bonus word is a member of `safe-english-words-3to6.txt` (3–6 letter allow-list) **and** the level's length band. Runtime `evaluateWord` rejects anything outside the allow-list. Two-letter words are intentionally excluded.
+- Dictionary: every answer and bonus word is a member of `safe-english-words-3to6.txt` (3–6 letter allow-list) **and** the level's length band. This holds for generated levels too — the generator only ever draws from that file. The wheel is a 3–6 letter multiset (duplicates allowed) that every board word must be spellable from; it is not itself required to be a word. Runtime `evaluateWord` rejects anything outside the allow-list. Two-letter words are intentionally excluded.
 - Non-payer promise: every puzzle and route is playable forever without ads or purchases; starter hints plus optional ad refills cover comfort help; there are no lives, timers, or forced interstitials.
-- Content seams: stable route/level IDs and typed word lists; save schema migrations preserve level, found words, revealed cells, settings, records, ad caps, and pending purchases.
+- Content seams: stable route/level IDs (`gen-<n>` for generated levels) and typed word lists; save schema migrations preserve level, found words, revealed cells, settings, records, ad caps, and pending purchases. `src/game/words/wheels.data.ts` is **frozen and versioned** — re-ranking it rewrites every generated level and invalidates saves, so regenerate only with a `WHEEL_TABLE_VERSION` bump.
 
 ## Monetization
 
@@ -62,6 +63,6 @@
 
 ## Verification
 
-- Simulation validates every answer against its wheel, crossword intersections, duplicate-letter use, hint reachability, scoring, and full twelve-level progression.
+- Simulation validates every answer against its wheel, crossword intersections, duplicate-letter use, hint reachability, scoring, and board size. Because levels are generated at runtime and unbounded, solvability cannot be proven by inspecting shipped data: `npm run simulate` generates and validates a 2,000-level prefix (override with `WORDWHIRL_SIM_LEVELS`) and asserts generation is deterministic.
 - Browser QA covers 320×568, 390×844, 768×1024, 1024×768, and 1440×900; pointer swipe, keyboard entry, results, shop, settings, save/reload, pause, safe areas, reduced motion, and renderer fallback.
 - Host-only QA remains required for real ads, Shop pricing, checkout, entitlements, refunds, haptics, and RUN storage/lifecycle delivery.

@@ -15,6 +15,17 @@ export function applyDevelopmentScreenPreview(): void {
             perfectLevels: 12_345,
         });
     }
+    // Levels past the authored twelve are generated, so previewing them needs a jump.
+    const requestedLevel = Number(params.get("level"));
+    if (Number.isFinite(requestedLevel) && requestedLevel >= 1) {
+        store.patch({
+            level: Math.floor(requestedLevel),
+            currentFoundWords: [],
+            currentBonusWords: [],
+            revealedCells: [],
+            result: null,
+        });
+    }
     const requested = params.get("screen");
     if (!requested) return;
     if (requested === "game") {

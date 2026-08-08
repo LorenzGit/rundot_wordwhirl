@@ -1,4 +1,4 @@
-import { levelForNumber } from "../game/words/levels.ts";
+import { LEVELS_PER_ARC, levelForNumber } from "../game/words/levels.ts";
 import { store } from "../state/store.ts";
 import { analytics } from "./analytics/analyticsConfig.ts";
 import { createLevelAnalytics } from "./levelAnalytics.ts";
@@ -248,7 +248,7 @@ export function completeWordwhirlLevel(hintsUsed: number, invalidAttempts: numbe
     });
 
     if (perfect) analytics.event("perfect_level", { level: state.level, level_id: level.id });
-    if (state.level === LEVELS_LEN) {
+    if (state.level % LEVELS_PER_ARC === 0) {
         analytics.event("route_loop_complete", {
             route_loops: state.routeLoops + 1,
             level_id: level.id,
@@ -263,8 +263,6 @@ export function completeWordwhirlLevel(hintsUsed: number, invalidAttempts: numbe
         });
     }
 }
-
-const LEVELS_LEN = 12;
 
 export function recordResultsCelebrateShown(): void {
     if (celebrateRecorded) return;

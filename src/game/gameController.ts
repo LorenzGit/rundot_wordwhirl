@@ -24,7 +24,7 @@ import { runtimeServices } from "../systems/runtimeServices.ts";
 import { saveSystem } from "../systems/save.ts";
 import { store } from "../state/store.ts";
 import { crosswordFor, nextHintCell } from "./words/crossword.ts";
-import { LEVELS, levelForNumber } from "./words/levels.ts";
+import { LEVELS_PER_ARC, levelForNumber } from "./words/levels.ts";
 import { evaluateWord, levelSparkReward } from "./words/rules.ts";
 
 let feedbackId = 0;
@@ -67,7 +67,7 @@ export function ensureLevelResult(options?: { grantRewards?: boolean }): boolean
     const reward = grantRewards ? levelSparkReward(state.level) : 0;
     const perfect = grantRewards && state.invalidAttempts === 0 && state.hintsUsed === 0;
     const perfectStreak = perfect ? state.currentPerfectStreak + 1 : state.currentPerfectStreak;
-    const routeComplete = state.level === LEVELS.length;
+    const routeComplete = state.level % LEVELS_PER_ARC === 0;
 
     store.patch({
         sparks: state.sparks + reward,
@@ -129,7 +129,7 @@ export function submitWord(rawWord: string): void {
         const reward = levelSparkReward(state.level);
         const perfect = state.invalidAttempts === 0 && state.hintsUsed === 0;
         const perfectStreak = perfect ? state.currentPerfectStreak + 1 : 0;
-        const routeComplete = state.level === LEVELS.length;
+        const routeComplete = state.level % LEVELS_PER_ARC === 0;
         store.patch({
             currentFoundWords: foundWords,
             lifetimeWords: state.lifetimeWords + 1,
@@ -252,8 +252,9 @@ export function shuffleLetters(): void {
 export function advanceLevel(): void {
     recordResultsContinue();
     const state = store.get();
-    const wrapped = state.level >= LEVELS.length;
-    store.patch({ level: wrapped ? 1 : state.level + 1, routeLoops: state.routeLoops + (wrapped ? 1 : 0) });
+    // Progression is unbounded; an arc boundary is a milestone, not a wrap.
+    const arcComplete = state.level % LEVELS_PER_ARC === 0;
+    store.patch({ level: state.level + 1, routeLoops: state.routeLoops + (arcComplete ? 1 : 0) });
     resetPuzzleState();
     void saveSystem.flush();
     startWordwhirlLevel();

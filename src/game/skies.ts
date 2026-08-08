@@ -32,9 +32,13 @@ const LEVEL_SKIES: readonly string[] = [
 
 export const SKY_COUNT = LEVEL_SKIES.length;
 
-/** Resolved Vite URL for the sky plate shown on this level (1-based). */
+/**
+ * Resolved Vite URL for the sky plate shown on this level (1-based).
+ * Levels are unbounded and plates are not, so the twelve cycle.
+ */
 export function skyUrlForLevel(levelNumber: number): string {
-    const index = Math.max(0, Math.min(LEVEL_SKIES.length - 1, Math.floor(levelNumber) - 1));
+    const ordinal = Math.max(1, Math.floor(levelNumber));
+    const index = (ordinal - 1) % LEVEL_SKIES.length;
     return LEVEL_SKIES[index] ?? sky01;
 }
 

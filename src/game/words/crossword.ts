@@ -246,12 +246,27 @@ export function buildCrossword(level: WordLevel): Crossword {
 }
 
 const CACHE = new Map<string, Crossword>();
+/**
+ * Bounded: generated levels mint a fresh id each time, so an unlimited run would
+ * otherwise grow this map for every level the player ever touches. Insertion order
+ * makes the first key the least recently added.
+ */
+const CACHE_LIMIT = 64;
 
 export function crosswordFor(level: WordLevel): Crossword {
     const cached = CACHE.get(level.id);
-    if (cached) return cached;
+    if (cached) {
+        // Refresh recency so the active level is never the next one evicted.
+        CACHE.delete(level.id);
+        CACHE.set(level.id, cached);
+        return cached;
+    }
     const built = buildCrossword(level);
     CACHE.set(level.id, built);
+    if (CACHE.size > CACHE_LIMIT) {
+        const oldest = CACHE.keys().next().value;
+        if (oldest !== undefined) CACHE.delete(oldest);
+    }
     return built;
 }
 
