@@ -16,6 +16,7 @@ export interface WordwhirlQaContract {
     unlockAudio(): Promise<boolean>;
     setPaused(paused: boolean): void;
     setSetting(key: "musicEnabled" | "sfxEnabled" | "hapticsEnabled" | "reducedMotion", value: boolean): Promise<void>;
+    setHints(count: number): Promise<void>;
     seedLevel(level: number): Promise<void>;
 }
 
@@ -69,9 +70,14 @@ export function installBrowserQaContract(): void {
             if (key === "reducedMotion") document.documentElement.dataset.reducedMotion = String(value);
             await saveSystem.flush();
         },
+        async setHints(count) {
+            store.patch({ hints: Math.max(0, Math.floor(count)) });
+            await saveSystem.flush();
+        },
         async seedLevel(level) {
             store.patch({
-                level: Math.max(1, Math.min(12, Math.floor(level))),
+                // No upper clamp: progression is unbounded and generated levels need QA too.
+                level: Math.max(1, Math.floor(level)),
                 currentFoundWords: [],
                 currentBonusWords: [],
                 revealedCells: [],

@@ -62,7 +62,8 @@ check(controller.includes("HINT_ECONOMY") && controller.includes("WATCH AD"), "h
 check(read("src/state/store.ts").includes("hints: 3"), "starter hint stock must be 3");
 
 check(packageJson.name === "wordwhirl", "package name must be wordwhirl");
-check(/^0\.\d+\.\d+$/.test(packageJson.version), "development version must be valid semver");
+// Kept in lockstep with the version RUN serves, so the menu label matches the deployed build.
+check(/^\d+\.\d+\.\d+$/.test(packageJson.version), "visible version must be valid semver");
 check(
     menu.includes("packageJson.version") && menu.includes("v{packageJson.version}"),
     "visible version is not sourced from package.json",

@@ -23,7 +23,7 @@ import { refreshReturnNotifications } from "../systems/retention/returnNotificat
 import { runtimeServices } from "../systems/runtimeServices.ts";
 import { saveSystem } from "../systems/save.ts";
 import { store } from "../state/store.ts";
-import { crosswordFor, nextHintCell } from "./words/crossword.ts";
+import { answersFullyRevealed, crosswordFor, nextHintCell } from "./words/crossword.ts";
 import { LEVELS_PER_ARC, levelForNumber } from "./words/levels.ts";
 import { evaluateWord, levelSparkReward } from "./words/rules.ts";
 
@@ -187,16 +187,40 @@ function spendHintAndReveal(source: "stock" | "ad_refill"): boolean {
         store.patch({ toast: "NO CELLS LEFT TO REVEAL" });
         return false;
     }
+    const revealedCells = [...state.revealedCells, cell.key];
+
+    // A reveal can fill in the last missing cell of an answer. Credit those words:
+    // otherwise the board reads as finished while the level never completes, and a
+    // player who hinted out the final word is left with nothing left to do.
+    const credited = answersFullyRevealed(crosswordFor(level), level.answers, state.currentFoundWords, revealedCells);
+    const currentFoundWords = [...state.currentFoundWords, ...credited];
+
     store.patch({
         hints: state.hints - 1,
-        revealedCells: [...state.revealedCells, cell.key],
+        revealedCells,
         hintsUsed: state.hintsUsed + 1,
+        currentFoundWords,
+        lifetimeWords: state.lifetimeWords + credited.length,
     });
     feedback(`${cell.letter} REVEALED`, "bonus");
     audioManager.play("hint");
     void runtimeServices.haptic("light");
     recordHintUsed(source, store.get().hints);
     if (store.get().hints === 0) recordHintStockEmpty();
+
+    if (levelFullySolved()) {
+        const solvedState = store.get();
+        if (ensureLevelResult({ grantRewards: true })) {
+            audioManager.play("clear");
+            void runtimeServices.haptic("success");
+            completeWordwhirlLevel(
+                solvedState.hintsUsed,
+                solvedState.invalidAttempts,
+                solvedState.currentBonusWords.length,
+            );
+            void refreshReturnNotifications("level_complete");
+        }
+    }
     void saveSystem.flush();
     return true;
 }

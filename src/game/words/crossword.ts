@@ -291,6 +291,26 @@ export function solvedCellKeys(
     return visible;
 }
 
+/**
+ * Answers whose every cell is now visible but which are not yet credited as found.
+ *
+ * Hints reveal cells, not words, so without this a player can reveal the last cell of
+ * the final answer and be left staring at a complete board that will not finish.
+ */
+export function answersFullyRevealed(
+    crossword: Crossword,
+    answers: readonly string[],
+    foundWords: readonly string[],
+    revealedCells: readonly string[],
+): string[] {
+    const visible = solvedCellKeys(crossword, foundWords, revealedCells);
+    return answers.filter((answer) => {
+        if (foundWords.includes(answer)) return false;
+        const cells = crossword.cells.filter((cell) => cell.words.includes(answer));
+        return cells.length > 0 && cells.every((cell) => visible.has(cell.key));
+    });
+}
+
 export function nextHintCell(
     crossword: Crossword,
     foundWords: readonly string[],
