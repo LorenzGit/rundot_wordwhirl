@@ -17,6 +17,8 @@ export interface WordwhirlQaContract {
     setPaused(paused: boolean): void;
     setSetting(key: "musicEnabled" | "sfxEnabled" | "hapticsEnabled" | "reducedMotion", value: boolean): Promise<void>;
     setHints(count: number): Promise<void>;
+    /** Reproduces a pre-fix stuck save: cells revealed without the answers credited. */
+    seedRevealedCells(keys: readonly string[]): Promise<void>;
     seedLevel(level: number): Promise<void>;
 }
 
@@ -72,6 +74,10 @@ export function installBrowserQaContract(): void {
         },
         async setHints(count) {
             store.patch({ hints: Math.max(0, Math.floor(count)) });
+            await saveSystem.flush();
+        },
+        async seedRevealedCells(keys) {
+            store.patch({ revealedCells: [...keys], currentFoundWords: [], result: null });
             await saveSystem.flush();
         },
         async seedLevel(level) {

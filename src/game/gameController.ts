@@ -53,17 +53,45 @@ export function levelFullySolved(state = store.get()): boolean {
 }
 
 /**
+ * Credit answers whose cells are already fully visible.
+ *
+ * Hints reveal cells, not words. Saves written before reveals were reconciled can hold
+ * a board with every cell showing and the answer still uncredited — unfinishable, and
+ * unrecoverable by hinting because `nextHintCell` finds nothing left to reveal. Runs on
+ * every level entry so an existing stuck save repairs itself. Returns words repaired.
+ */
+function creditRevealedAnswers(): number {
+    const state = store.get();
+    const level = levelForNumber(state.level);
+    const credited = answersFullyRevealed(
+        crosswordFor(level),
+        level.answers,
+        state.currentFoundWords,
+        state.revealedCells,
+    );
+    if (credited.length === 0) return 0;
+    store.patch({
+        currentFoundWords: [...state.currentFoundWords, ...credited],
+        lifetimeWords: state.lifetimeWords + credited.length,
+    });
+    return credited.length;
+}
+
+/**
  * Open the level-complete surface if every answer is already found.
  * Used after a cold resume where progress was saved without an ephemeral `result`.
  * Never double-grants sparks/records unless `grantRewards` is true.
  */
 export function ensureLevelResult(options?: { grantRewards?: boolean }): boolean {
+    const repaired = creditRevealedAnswers();
     const state = store.get();
     if (state.result) return true;
     if (!levelFullySolved(state)) return false;
 
     const level = levelForNumber(state.level);
-    const grantRewards = options?.grantRewards === true;
+    // A board only completed by the repair above was never awarded, so it pays out now.
+    // A normal resume repairs nothing and keeps the caller's no-double-grant behaviour.
+    const grantRewards = options?.grantRewards === true || repaired > 0;
     const reward = grantRewards ? levelSparkReward(state.level) : 0;
     const perfect = grantRewards && state.invalidAttempts === 0 && state.hintsUsed === 0;
     const perfectStreak = perfect ? state.currentPerfectStreak + 1 : state.currentPerfectStreak;
@@ -89,12 +117,12 @@ export function ensureLevelResult(options?: { grantRewards?: boolean }): boolean
 export function startCurrentLevel(): void {
     recordPlayTapped();
     // Resume a fully-cleared board into the results flow instead of a dead end
-    // (save keeps found words but not the ephemeral result object).
-    if (levelFullySolved()) {
-        store.patch({ phase: "playing", menuScreen: "main" });
-        ensureLevelResult({ grantRewards: false });
-    } else {
-        store.patch({ phase: "playing", menuScreen: "main", result: null });
+    // (save keeps found words but not the ephemeral result object). ensureLevelResult
+    // also repairs a board that hints already filled in, so entry is the recovery point
+    // for a save stuck with every cell revealed and the answers uncredited.
+    store.patch({ phase: "playing", menuScreen: "main" });
+    if (!ensureLevelResult({ grantRewards: false })) {
+        store.patch({ result: null });
     }
     audioManager.play("start");
     startWordwhirlLevel();
@@ -184,7 +212,11 @@ function spendHintAndReveal(source: "stock" | "ad_refill"): boolean {
     const level = levelForNumber(state.level);
     const cell = nextHintCell(crosswordFor(level), state.currentFoundWords, state.revealedCells);
     if (!cell) {
-        store.patch({ toast: "NO CELLS LEFT TO REVEAL" });
+        // Nothing hidden left. If that is because reveals already finished the board,
+        // credit them and pay out rather than toasting at a player who cannot proceed.
+        if (!ensureLevelResult({ grantRewards: false })) {
+            store.patch({ toast: "NO CELLS LEFT TO REVEAL" });
+        }
         return false;
     }
     const revealedCells = [...state.revealedCells, cell.key];

@@ -50,6 +50,24 @@ for (const levelNumber of [7, 12, 13, 500]) {
     );
 }
 
+// The shape of an already-broken save: every cell revealed, nothing credited. One call
+// must repair the whole board, because entering the level is the only recovery point -
+// spending another hint finds nothing to reveal and bails out early.
+for (const levelNumber of [7, 13]) {
+    const level = levelForNumber(levelNumber);
+    const everyCell = crosswordFor(level).cells.map((cell) => cell.key);
+    const repaired = wordsFullyRevealed(levelNumber, [], everyCell);
+    for (const answer of level.answers) {
+        assert(
+            repaired.includes(answer),
+            `level ${levelNumber} (${level.id}): a fully revealed board left "${answer}" uncredited on entry — an existing stuck save would never recover`,
+        );
+    }
+    console.log(
+        `level ${String(levelNumber).padStart(3)} ${level.id.padEnd(11)} stuck save repairs all ${level.answers.length} answers on entry`,
+    );
+}
+
 // A partially hinted word must NOT be credited early.
 const partial = levelForNumber(7);
 const partialCrossword = crosswordFor(partial);
