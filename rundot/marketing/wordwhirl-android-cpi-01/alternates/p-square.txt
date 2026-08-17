@@ -1,0 +1,23 @@
+Use your image generation tool to generate an image with a 1:1 square aspect ratio (1024x1024).
+
+Subject: a mobile word-puzzle game advertisement image, no logo and no advertising copy.
+
+Art style: flat cartoon illustration. Bold dark inked outlines, rounded paper-cutout shapes, high-contrast flat color fills, subtle paper texture. Absolutely no photorealism, no 3D rendering, no painterly brushwork, no neon or glass effects.
+
+Strict palette, use these colors only: deep indigo #1B2440, parchment cream #F5EEDC, aurora mint #8FD3C0, warm apricot #F0A868, gold #FFCB6B.
+
+Composition, described from bottom to top:
+- The lower third is dominated by one large circular navy compass dial, cut off by the bottom edge of the frame. Its face is deep indigo with a thin mint rim and small evenly spaced tick marks. Six round parchment-cream discs sit around the inside of the dial. Each disc carries one large, clean, dark indigo uppercase letter. Going clockwise from the top the letters are: S, T, U, A, N, R. Render every letter crisply and correctly; do not invent extra letters or symbols.
+- A glowing aurora-mint ribbon, about 12 pixels thick with soft rounded ends, traces a clean path connecting the S disc to the U disc to the N disc. A simple flat cartoon hand, drawn as a soft cream silhouette with no fingernails and no skin texture, rests at the end of that ribbon on the N disc as if mid-swipe.
+- Three gold four-pointed sparkles lift off the mint ribbon and fly upward toward the middle of the frame, getting smaller as they rise.
+- The middle of the frame holds a small floating crossword grid made of rounded parchment-cream tiles with inked edges, tilted very slightly. One horizontal row of three tiles carries the letters S, U, N in dark indigo. Crossing it vertically is a column of three empty tiles in flat dark slate blue with nothing written on them. No other letters anywhere in the grid.
+- Behind everything, a full-bleed sky of layered flat cartoon clouds with curled edges, split on a diagonal: bruised indigo and slate storm clouds in the upper left, breaking open into warm apricot and gold dawn light in the lower right.
+- One dark navy silhouette of a small floating island, its top edge fringed with mint-green foliage, drifts in the clearing air on the right side, at about two-thirds height.
+
+Mood: calm, cozy, satisfying mastery. The quiet exhale right after a puzzle clicks into place. Not urgent, not adrenaline.
+
+Readability requirement: the bright circular dial with the glowing mint line through it must be instantly recognizable even when the image is shrunk to thumbnail size.
+
+Do not include: any headline, caption, watermark, logo, app store badge, score bar, button icons, emoji, photographs, or human faces. The only text anywhere in the image is the nine letters described above.
+
+Save or copy the resulting image file to /private/tmp/claude-502/-Users-lorenzonuvoletta-git-run-games-wordwhirl/2b7e7157-aa5a-4bf7-a08a-87bd777f303a/scratchpad/codex-out/square.png and then reply with the absolute file path and its file size.

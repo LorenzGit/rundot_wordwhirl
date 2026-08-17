@@ -1,0 +1,40 @@
+Use your image generation tool to generate an image with a tall portrait aspect ratio (1024x1536).
+
+FIRST, before generating anything, open and look at these three reference images in your working directory:
+- refs/backdrop-style.jpg  - the game's actual painted sky backdrop. This defines the rendering style and palette. Match it closely.
+- refs/ui-level1.png       - the real game UI: compass dial, letter discs, empty crossword cells.
+- refs/ui-filled-tiles.png - the real game UI with filled crossword tiles and the word-preview pill.
+
+Study them, then generate an image that looks like it came from the same artist and the same game.
+
+RENDERING STYLE, this is the most important requirement: soft painterly digital illustration, gouache and soft-pastel brushwork, visible painted texture, soft blended edges, atmospheric haze and aerial depth. There are NO outlines anywhere in this art. Do NOT use bold black linework, do NOT use flat vector shapes, do NOT use hard-edged paper-cutout or sticker styling, do NOT use a cel-shaded cartoon look. Everything is brushed and softly blended, like a children's picture-book painting.
+
+PALETTE, muted and desaturated, never neon or saturated: deep teal-navy night sky #1E3A4C, slate violet cloud shadow #6E6C8C, warm cream cloud highlight #F7F0E4, soft mint and celadon #9BD9C4, dusty peach and apricot lower sky #F4B183, pale gold sun glow #FBE3B0. Keep the orange soft and dusty - never a bright saturated orange.
+
+WORLD ELEMENTS, taken from the reference backdrop: a soft glowing pale-gold sun with delicate thin rays; layered painterly cloud banks whose ends curl into soft decorative spirals; fine mint filigree wind swirls drifting across open sky; small scattered white stars in the upper dark sky; flat dark navy silhouette islands topped with mint and celadon foliage, ferns and trailing vines hanging from their edges.
+
+GAME UI TREATMENT, exactly as in the UI references:
+- The compass is a large circle with a dark translucent navy face, a thin pale-mint rim ring, and fine mint tick marks around its inner edge.
+- Letter discs on the compass are solid warm-ivory circles carrying bold dark-navy uppercase letters.
+- Empty crossword cells are dark slate translucent rounded squares with a faint lighter edge.
+- Filled crossword tiles are pale mint-white rounded squares with dark teal uppercase letters.
+
+SUBJECT: a tall portrait store-screenshot-style advertisement for this word-puzzle game, showing the reward moment just after a puzzle is solved.
+
+Keep all important content inside the central 85% of the width and clear of the top 12% and bottom 10% of the height, because those bands get cropped.
+
+COMPOSITION, top to bottom:
+- Upper area: one horizontal rounded pill with a dark translucent navy fill and a thin mint outline, containing a single line of large warm-cream uppercase text with wide letter spacing reading exactly: FIND EXTRA WORDS, EARN EXTRA SPARKS. Render it crisply and spell it correctly. It is the only sentence in the image.
+- Just below it on the right, a small rounded dark navy pill containing one warm-gold four-pointed sparkle and the number 240 in warm cream. No other numbers anywhere.
+- Upper middle: a completed crossword laid out as a compact plus shape, drawn calm and small. Use exactly these words and no others: the word GLOW running across the top row; the word SPARK running across the middle row; the word BRIGHT running across the bottom row; and the word SHINE running down the left column, its S sharing the first cell of SPARK. Every tile is a pale mint-white rounded square with a dark teal uppercase letter. Do not add any other row or column, and do not leave stray unconnected letters.
+- Middle and lower area: a wide, soft, celebratory drift of warm-gold four-pointed sparkles streaming outward from the crossword and scattering across the open sky, largest near the grid and finer as they spread. This drift is the focal point.
+- Background: a full-bleed painted sky in the reference style, fully cleared and warm - dusty peach and pale gold, with soft painterly cloud banks whose ends curl into spirals, and fine mint filigree wind swirls drifting through. Keep a little slate violet high in the frame so it does not go flat orange. No storm clouds.
+- Two flat dark navy silhouette islands topped with mint foliage and trailing vines sit low in the frame, one at the left and one at the right, framing the sparkle drift.
+
+There is no compass circle, no letter discs and no hand in this image. This frame is about the reward, not the input.
+
+MOOD: warm, generous, quietly triumphant.
+
+Do not include: any watermark, logo, app store badge, emoji, photographs, human faces, or any sentence other than the headline described above.
+
+Save or copy the resulting image file to /private/tmp/claude-502/-Users-lorenzonuvoletta-git-run-games-wordwhirl/2b7e7157-aa5a-4bf7-a08a-87bd777f303a/scratchpad/codex-out/vertical-sparks2.png and then reply with the absolute file path and its file size.

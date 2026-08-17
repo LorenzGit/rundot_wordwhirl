@@ -1,0 +1,38 @@
+Use your image generation tool to generate an image with a 1:1 square aspect ratio (1024x1024).
+
+FIRST, before generating anything, open and look at these three reference images in your working directory:
+- refs/backdrop-style.jpg  - the game's actual painted sky backdrop. This defines the rendering style and palette. Match it closely.
+- refs/ui-level1.png       - the real game UI: compass dial, letter discs, empty crossword cells.
+- refs/ui-filled-tiles.png - the real game UI with filled crossword tiles and the word-preview pill.
+
+Study them, then generate an image that looks like it came from the same artist and the same game.
+
+RENDERING STYLE, this is the most important requirement: soft painterly digital illustration, gouache and soft-pastel brushwork, visible painted texture, soft blended edges, atmospheric haze and aerial depth. There are NO outlines anywhere in this art. Do NOT use bold black linework, do NOT use flat vector shapes, do NOT use hard-edged paper-cutout or sticker styling, do NOT use a cel-shaded cartoon look. Everything is brushed and softly blended, like a children's picture-book painting.
+
+PALETTE, muted and desaturated, never neon or saturated: deep teal-navy night sky #1E3A4C, slate violet cloud shadow #6E6C8C, warm cream cloud highlight #F7F0E4, soft mint and celadon #9BD9C4, dusty peach and apricot lower sky #F4B183, pale gold sun glow #FBE3B0. Keep the orange soft and dusty - never a bright saturated orange.
+
+WORLD ELEMENTS, taken from the reference backdrop: a soft glowing pale-gold sun with delicate thin rays; layered painterly cloud banks whose ends curl into soft decorative spirals; fine mint filigree wind swirls drifting across open sky; small scattered white stars in the upper dark sky; flat dark navy silhouette islands topped with mint and celadon foliage, ferns and trailing vines hanging from their edges.
+
+GAME UI TREATMENT, exactly as in the UI references:
+- The compass is a large circle with a dark translucent navy face, a thin pale-mint rim ring, and fine mint tick marks around its inner edge.
+- Letter discs on the compass are solid warm-ivory circles carrying bold dark-navy uppercase letters.
+- Empty crossword cells are dark slate translucent rounded squares with a faint lighter edge.
+- Filled crossword tiles are pale mint-white rounded squares with dark teal uppercase letters.
+
+SUBJECT: a 1:1 advertisement image for this word-puzzle game. No logo and no advertising copy.
+
+COMPOSITION, bottom to top:
+- The lower third is filled by one large compass circle, cut off by the bottom edge of the frame, rendered exactly as described in the UI treatment above. Six ivory letter discs sit around the inside of its rim, each with one bold dark-navy uppercase letter; going clockwise from the top they read S, T, U, A, N, R. Render every letter crisply and correctly and invent no extra letters or symbols.
+- A soft glowing mint ribbon with gently blurred painterly edges traces a path connecting the S disc to the U disc to the N disc. A simple soft cream hand shape rests at the end of that trace as if mid-swipe.
+- Three small warm-gold four-pointed sparkles drift upward off the ribbon toward the middle of the frame, getting smaller as they rise.
+- The middle of the frame holds a small floating crossword: one horizontal row of three pale mint-white tiles reading S, U, N in dark teal, crossed by a vertical column of three dark slate translucent empty cells with nothing written on them. No other letters anywhere in the grid.
+- Behind everything, a full-bleed painted sky in the reference style: deep teal-navy and slate violet storm cloud in the upper left with a few faint stars, softening across the frame into warm dusty peach and pale gold light in the lower right, where the soft sun glows low. Painterly cloud banks with curled spiral ends layer through the middle, and fine mint filigree wind swirls drift across the open air.
+- One flat dark navy silhouette island topped with mint foliage and trailing vines floats on the right side at about two-thirds height.
+
+MOOD: calm, cozy, unhurried satisfaction. The quiet exhale right after a puzzle clicks into place.
+
+READABILITY: the compass circle with the glowing mint trace through it must stay recognizable when the image is shrunk to thumbnail size.
+
+Do not include: any headline, caption, watermark, logo, app store badge, score bar, emoji, photographs, or human faces. The only text in the image is the nine letters described above.
+
+Save or copy the resulting image file to /private/tmp/claude-502/-Users-lorenzonuvoletta-git-run-games-wordwhirl/2b7e7157-aa5a-4bf7-a08a-87bd777f303a/scratchpad/codex-out/square2.png and then reply with the absolute file path and its file size.

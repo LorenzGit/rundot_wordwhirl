@@ -1,0 +1,24 @@
+Use your image generation tool to generate an image with a tall portrait aspect ratio (1024x1536).
+
+Subject: a mobile word-puzzle game store screenshot used as an advertisement, for a game whose fantasy is clearing a storm-tossed sky by solving word puzzles.
+
+Art style: flat cartoon illustration. Bold dark inked outlines, rounded paper-cutout shapes, high-contrast flat color fills, subtle paper texture. Absolutely no photorealism, no 3D rendering, no painterly brushwork, no neon or glass effects.
+
+Strict palette, use these colors only: deep indigo #1B2440, parchment cream #F5EEDC, aurora mint #8FD3C0, warm apricot #F0A868, gold #FFCB6B.
+
+Keep all important content inside the central 85% of the width and away from the top 12% and bottom 10% of the height, because those bands get cropped.
+
+Composition, described from top to bottom:
+- Upper area: one horizontal rounded pill of soft deep indigo, spanning most of the width, containing a single line of large parchment-cream uppercase text with wide letter spacing that reads exactly: ONE WORD FROM A CLEAR SKY. Render this headline crisply and spell it correctly. It is the only sentence in the image.
+- Upper middle: a floating crossword grid made of rounded parchment-cream tiles with inked edges. One horizontal row of three tiles carries the letters S, U, N in large clean dark indigo uppercase. Crossing it vertically is a column of three empty tiles in flat dark slate blue with nothing written on them. No other letters in the grid.
+- Lower third: one large circular navy compass dial, cut off by the bottom edge of the frame. Its face is deep indigo with a thin mint rim and small evenly spaced tick marks. Six round parchment-cream discs sit around the inside of the dial, each carrying one large clean dark indigo uppercase letter; going clockwise from the top the letters are S, T, U, A, N, R. Render every letter crisply and do not invent extra letters or symbols.
+- A glowing aurora-mint ribbon traces a clean path connecting the S disc to the U disc to the N disc, and a simple flat cartoon hand, drawn as a soft cream silhouette with no fingernails and no skin texture, rests at the end of that ribbon as if mid-swipe. Three gold four-pointed sparkles lift off the ribbon and fly up toward the empty crossword column.
+- Two small round cream buttons flank the dial at its sides: on the left a dark indigo shuffle arrows icon, on the right a dark indigo lightbulb icon. Icons only, no words on the buttons.
+- Behind everything, a full-bleed sky of layered flat cartoon clouds with curled edges, shading from bruised indigo storm clouds at the top down into warm apricot and gold dawn light at the bottom.
+- One dark navy silhouette of a small floating island, its top edge fringed with mint-green foliage, drifts at the middle right.
+
+Mood: calm, cozy, satisfying mastery. Unhurried.
+
+Do not include: any watermark, logo, app store badge, score bar, emoji, photographs, human faces, or any sentence other than the headline described above.
+
+Save or copy the resulting image file to /private/tmp/claude-502/-Users-lorenzonuvoletta-git-run-games-wordwhirl/2b7e7157-aa5a-4bf7-a08a-87bd777f303a/scratchpad/codex-out/vertical.png and then reply with the absolute file path and its file size.

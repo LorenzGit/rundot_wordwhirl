@@ -1,0 +1,39 @@
+Use your image generation tool to generate an image with a tall portrait aspect ratio (1024x1536).
+
+FIRST, before generating anything, open and look at these three reference images in your working directory:
+- refs/backdrop-style.jpg  - the game's actual painted sky backdrop. This defines the rendering style and palette. Match it closely.
+- refs/ui-level1.png       - the real game UI: compass dial, letter discs, empty crossword cells.
+- refs/ui-filled-tiles.png - the real game UI with filled crossword tiles and the word-preview pill.
+
+Study them, then generate an image that looks like it came from the same artist and the same game.
+
+RENDERING STYLE, this is the most important requirement: soft painterly digital illustration, gouache and soft-pastel brushwork, visible painted texture, soft blended edges, atmospheric haze and aerial depth. There are NO outlines anywhere in this art. Do NOT use bold black linework, do NOT use flat vector shapes, do NOT use hard-edged paper-cutout or sticker styling, do NOT use a cel-shaded cartoon look. Everything is brushed and softly blended, like a children's picture-book painting.
+
+PALETTE, muted and desaturated, never neon or saturated: deep teal-navy night sky #1E3A4C, slate violet cloud shadow #6E6C8C, warm cream cloud highlight #F7F0E4, soft mint and celadon #9BD9C4, dusty peach and apricot lower sky #F4B183, pale gold sun glow #FBE3B0. Keep the orange soft and dusty - never a bright saturated orange.
+
+WORLD ELEMENTS, taken from the reference backdrop: a soft glowing pale-gold sun with delicate thin rays; layered painterly cloud banks whose ends curl into soft decorative spirals; fine mint filigree wind swirls drifting across open sky; small scattered white stars in the upper dark sky; flat dark navy silhouette islands topped with mint and celadon foliage, ferns and trailing vines hanging from their edges.
+
+GAME UI TREATMENT, exactly as in the UI references:
+- The compass is a large circle with a dark translucent navy face, a thin pale-mint rim ring, and fine mint tick marks around its inner edge.
+- Letter discs on the compass are solid warm-ivory circles carrying bold dark-navy uppercase letters.
+- Empty crossword cells are dark slate translucent rounded squares with a faint lighter edge.
+- Filled crossword tiles are pale mint-white rounded squares with dark teal uppercase letters.
+
+SUBJECT: a tall portrait store-screenshot-style advertisement for this word-puzzle game.
+
+Keep all important content inside the central 85% of the width and clear of the top 12% and bottom 10% of the height, because those bands get cropped.
+
+COMPOSITION, top to bottom:
+- Upper area: one horizontal rounded pill with a dark translucent navy fill and a thin mint outline, containing a single line of large warm-cream uppercase text with wide letter spacing reading exactly: ONE WORD FROM A CLEAR SKY. Render it crisply and spell it correctly. It is the only sentence in the image.
+- Upper middle: a floating crossword. One horizontal row of three pale mint-white rounded tiles reads S, U, N in dark teal, crossed by a vertical column of three dark slate translucent empty cells with nothing written on them. No other letters in the grid.
+- Lower third: one large compass circle cut off by the bottom edge, rendered exactly as described in the UI treatment above, with six ivory letter discs around its rim reading clockwise from the top S, T, U, A, N, R in bold dark navy. Render every letter crisply and invent no extra letters.
+- A soft glowing mint ribbon traces a path connecting S to U to N, with a simple soft cream hand shape at its end as if mid-swipe. Three warm-gold four-pointed sparkles drift up from the ribbon toward the empty crossword column.
+- Two small dark navy circular buttons flank the compass at its sides: a mint shuffle-arrows icon on the left, a warm-gold lightbulb icon on the right. Icons only, no words.
+- Behind everything, a full-bleed painted sky in the reference style: deep teal-navy with faint scattered stars at the top, softening down through slate violet and painterly cloud banks with curled spiral ends into warm dusty peach and pale gold at the bottom, where a soft sun glows. Fine mint filigree wind swirls drift through the open sky.
+- One flat dark navy silhouette island topped with mint foliage and trailing vines floats at the middle right.
+
+MOOD: calm, cozy, unhurried.
+
+Do not include: any watermark, logo, app store badge, emoji, photographs, human faces, or any sentence other than the headline described above.
+
+Save or copy the resulting image file to /private/tmp/claude-502/-Users-lorenzonuvoletta-git-run-games-wordwhirl/2b7e7157-aa5a-4bf7-a08a-87bd777f303a/scratchpad/codex-out/vertical2.png and then reply with the absolute file path and its file size.
