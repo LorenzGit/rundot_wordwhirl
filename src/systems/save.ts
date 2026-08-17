@@ -4,10 +4,10 @@ import { levelForNumber } from "../game/words/levels.ts";
 import { store, type AppState, type PendingPurchaseIntentSnapshot } from "../state/store.ts";
 
 const SAVE_KEY = "wordwhirl:save:v1";
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export interface WordwhirlSaveV2 {
-    version: 2;
+    version: 3;
     settings: Pick<
         AppState,
         | "musicEnabled"
@@ -39,6 +39,11 @@ export interface WordwhirlSaveV2 {
         | "invalidAttempts"
         | "adHintDay"
         | "adHintsToday"
+        | "dailyRewardLastClaimDay"
+        | "dailyRewardStreak"
+        | "dailyRewardClaimIds"
+        | "likePrompted"
+        | "analyticsFunnelMarks"
     >;
     commerce: Pick<AppState, "pendingPurchaseIntent" | "ownedProductIds">;
 }
@@ -109,6 +114,13 @@ function productIds(value: unknown): string[] {
     ].slice(0, 16);
 }
 
+function recentStrings(value: unknown, limit: number): string[] {
+    if (!Array.isArray(value)) return [];
+    return [
+        ...new Set(value.filter((entry): entry is string => typeof entry === "string" && entry.length <= 160)),
+    ].slice(-limit);
+}
+
 function snapshot(): WordwhirlSaveV2 {
     const state = store.get();
     return {
@@ -142,6 +154,11 @@ function snapshot(): WordwhirlSaveV2 {
             invalidAttempts: state.invalidAttempts,
             adHintDay: state.adHintDay,
             adHintsToday: state.adHintsToday,
+            dailyRewardLastClaimDay: state.dailyRewardLastClaimDay,
+            dailyRewardStreak: state.dailyRewardStreak,
+            dailyRewardClaimIds: state.dailyRewardClaimIds,
+            likePrompted: state.likePrompted,
+            analyticsFunnelMarks: state.analyticsFunnelMarks,
         },
         commerce: {
             pendingPurchaseIntent: state.pendingPurchaseIntent,
@@ -158,9 +175,9 @@ function migrate(raw: unknown): WordwhirlSaveV2 | null {
         progress?: Record<string, unknown>;
         commerce?: WordwhirlSaveV2["commerce"];
     };
-    // Accept v1 (no hints field) and v2.
+    // Accept v1 (no hints field), v2, and current v3 engagement state.
     const version = candidate.version;
-    if ((version !== 1 && version !== 2) || !candidate.settings || !candidate.progress) {
+    if ((version !== 1 && version !== 2 && version !== 3) || !candidate.settings || !candidate.progress) {
         return null;
     }
     const defaults = snapshot();
@@ -207,6 +224,11 @@ function migrate(raw: unknown): WordwhirlSaveV2 | null {
             invalidAttempts: integer(progress.invalidAttempts),
             adHintDay: dayKey(progress.adHintDay),
             adHintsToday: integer(progress.adHintsToday),
+            dailyRewardLastClaimDay: dayKey(progress.dailyRewardLastClaimDay),
+            dailyRewardStreak: integer(progress.dailyRewardStreak),
+            dailyRewardClaimIds: recentStrings(progress.dailyRewardClaimIds, 90),
+            likePrompted: booleanOr(progress.likePrompted, false),
+            analyticsFunnelMarks: recentStrings(progress.analyticsFunnelMarks, 160),
         },
         commerce: {
             pendingPurchaseIntent: pendingIntent(candidate.commerce?.pendingPurchaseIntent),
@@ -225,7 +247,13 @@ function parse(raw: string | null): WordwhirlSaveV2 | null {
 }
 
 function apply(save: WordwhirlSaveV2): void {
-    store.patch({ ...save.settings, ...save.progress, ...save.commerce });
+    const runtimeMarks = store.get().analyticsFunnelMarks;
+    store.patch({
+        ...save.settings,
+        ...save.progress,
+        analyticsFunnelMarks: [...new Set([...save.progress.analyticsFunnelMarks, ...runtimeMarks])],
+        ...save.commerce,
+    });
 }
 
 function readLocal(): string | null {
@@ -245,6 +273,7 @@ function usesRunStorage(): boolean {
 let lastSaved = "";
 let pendingSave: string | null = null;
 let flushInFlight: Promise<boolean> | null = null;
+let scheduledFlushTimer = 0;
 
 async function persist(serialized: string): Promise<boolean> {
     if (usesRunStorage()) return writeAppStorage(SAVE_KEY, serialized);
@@ -266,6 +295,10 @@ export const saveSystem = {
         return save ? (usesRunStorage() ? "run" : "local") : "defaults";
     },
     async flush(): Promise<boolean> {
+        if (scheduledFlushTimer) {
+            window.clearTimeout(scheduledFlushTimer);
+            scheduledFlushTimer = 0;
+        }
         const serialized = JSON.stringify(snapshot());
         if (serialized === lastSaved && pendingSave === null) return true;
         pendingSave = serialized;
@@ -284,5 +317,12 @@ export const saveSystem = {
             flushInFlight = null;
         });
         return flushInFlight;
+    },
+    scheduleFlush(delayMs = 350): void {
+        if (scheduledFlushTimer) window.clearTimeout(scheduledFlushTimer);
+        scheduledFlushTimer = window.setTimeout(() => {
+            scheduledFlushTimer = 0;
+            void this.flush();
+        }, delayMs);
     },
 };

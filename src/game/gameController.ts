@@ -21,6 +21,8 @@ import {
 } from "../systems/gameAnalytics.ts";
 import { refreshReturnNotifications } from "../systems/retention/returnNotifications.ts";
 import { runtimeServices } from "../systems/runtimeServices.ts";
+import { showContextualLikePrompt } from "../sdk/runSdk.ts";
+import { analytics } from "../systems/analytics/analyticsConfig.ts";
 import { saveSystem } from "../systems/save.ts";
 import { store } from "../state/store.ts";
 import { answersFullyRevealed, crosswordFor, nextHintCell } from "./words/crossword.ts";
@@ -305,11 +307,23 @@ export function shuffleLetters(): void {
     audioManager.play("shuffle");
 }
 
-export function advanceLevel(): void {
+export async function advanceLevel(): Promise<void> {
     recordResultsContinue();
     const state = store.get();
     // Progression is unbounded; an arc boundary is a milestone, not a wrap.
     const arcComplete = state.level % LEVELS_PER_ARC === 0;
+    const positiveMilestone = state.level % 3 === 0;
+    if (positiveMilestone && state.levelsCompleted >= 3 && !state.likePrompted) {
+        const result = await showContextualLikePrompt();
+        analytics.event("like_prompt_result", {
+            shown: result?.shown ?? false,
+            liked: result?.liked ?? false,
+            dismissed: result?.dismissed ?? false,
+            reason: result?.reason ?? "unavailable",
+            level: state.level,
+        });
+        if (result?.shown || result?.liked) store.patch({ likePrompted: true });
+    }
     store.patch({ level: state.level + 1, routeLoops: state.routeLoops + (arcComplete ? 1 : 0) });
     resetPuzzleState();
     void saveSystem.flush();

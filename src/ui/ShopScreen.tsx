@@ -10,6 +10,7 @@ import {
     reconcilePendingPurchase,
     refreshCommerce,
     validateCatalogInDevelopment,
+    recordStoreOpened,
 } from "../systems/monetization/commerce.ts";
 import { DEV_PREVIEW_PRICES, type ProductId } from "../systems/monetization/config.ts";
 import { recordHintPackSelected, recordPurchaseFunnel, recordScreenView } from "../systems/gameAnalytics.ts";
@@ -74,6 +75,9 @@ export default function ShopScreen() {
 
     const aurora = productView("aurora_compass");
     const hintPack = productView("hint_pack");
+    useEffect(() => {
+        recordStoreOpened(["aurora_compass", "hint_pack"]);
+    }, []);
     const unlocked = level >= 3;
     const capabilities = getRunCapabilities();
 

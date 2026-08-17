@@ -120,8 +120,8 @@ export const HANDCRAFTED_LEVELS: readonly WordLevel[] = Object.freeze([
         route: "Aurora Arc",
         title: "Gardenrise",
         letters: "GARDEN",
-        answers: ["GARDEN", "DANGER", "RANGE", "GRADE"],
-        bonus: ["GRAND", "ANGER", "DEAR", "DARE", "AGE"],
+        answers: ["GARDEN", "RANGE", "DEAR", "DARE"],
+        bonus: ["DANGER", "GRADE", "GRAND", "ANGER", "AGE"],
     },
     {
         id: "aurora-03",

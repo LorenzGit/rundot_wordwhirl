@@ -28,6 +28,8 @@ export interface RunCapabilities {
     ads: boolean;
     purchases: boolean;
     subscriptions: boolean;
+    leaderboard: boolean;
+    popups: boolean;
 }
 
 const OFFLINE_CAPABILITIES: RunCapabilities = {
@@ -41,12 +43,31 @@ const OFFLINE_CAPABILITIES: RunCapabilities = {
     ads: false,
     purchases: false,
     subscriptions: false,
+    leaderboard: false,
+    popups: false,
 };
 
 let capabilities: RunCapabilities = OFFLINE_CAPABILITIES;
 
 function sdkNamespace(name: string): boolean {
     return typeof (RundotGameAPI as unknown as Record<string, unknown>)[name] === "object";
+}
+
+/**
+ * PITFALL: there is NO runtime RundotGameAPI.haptics namespace (the HapticsApi
+ * interface in the .d.ts is types-only). Support comes from DeviceInfo, and the
+ * trigger lives on the API root. Read LIVE at every call site that acts on it:
+ * `enabled` reflects the player's system setting, which can change mid-session,
+ * and a cached false at boot must never gate a later action.
+ */
+function hapticsAvailableNow(): boolean {
+    if (!_ready) return false;
+    try {
+        const device = RundotGameAPI.system.getDevice();
+        return device?.haptics?.supported === true && device?.haptics?.enabled === true;
+    } catch {
+        return false;
+    }
 }
 
 function snapshotCapabilities(): RunCapabilities {
@@ -59,24 +80,83 @@ function snapshotCapabilities(): RunCapabilities {
         analytics: sdkNamespace("analytics"),
         liveops: sdkNamespace("liveops"),
         notifications: sdkNamespace("notifications"),
-        // PITFALL: there is NO runtime RundotGameAPI.haptics namespace (the
-        // HapticsApi interface in the .d.ts is types-only). Support comes
-        // from DeviceInfo, and the trigger lives on the API root.
-        haptics: (() => {
-            try {
-                const device = RundotGameAPI.system.getDevice();
-                return device?.haptics?.supported === true && device?.haptics?.enabled === true;
-            } catch {
-                return false;
-            }
-        })(),
+        haptics: hapticsAvailableNow(),
         ads: environment?.ads === true,
         purchases: environment?.purchases === true,
         subscriptions: environment?.subscriptions === true,
+        leaderboard: sdkNamespace("leaderboard"),
+        popups: sdkNamespace("popups"),
     };
 }
 
+export interface LeaderboardSubmission {
+    accepted: boolean;
+    rank: number | null;
+    reason: string | null;
+}
+
+export async function submitLeaderboardScore(input: {
+    score: number;
+    durationSeconds: number;
+    metadata?: Record<string, string | number | boolean>;
+}): Promise<LeaderboardSubmission | null> {
+    if (!_ready || !sdkNamespace("leaderboard")) return null;
+    try {
+        const result = await withTimeout(
+            RundotGameAPI.leaderboard.submitScore({
+                score: Math.max(0, Math.floor(input.score)),
+                duration: Math.max(1, Math.round(input.durationSeconds)),
+                ...(input.metadata ? { metadata: input.metadata } : {}),
+            }),
+            5_000,
+            "leaderboard submit",
+        );
+        return {
+            accepted: result.accepted === true,
+            rank: result.accepted && typeof result.rank === "number" ? result.rank : null,
+            reason: result.accepted ? null : (result.reason ?? "rejected"),
+        };
+    } catch (error) {
+        console.warn("[run-sdk] leaderboard submit failed", error);
+        return null;
+    }
+}
+
+export interface LikePromptResult {
+    shown: boolean;
+    liked: boolean;
+    dismissed: boolean;
+    reason: string | null;
+}
+
+export async function showContextualLikePrompt(): Promise<LikePromptResult | null> {
+    if (!_ready || !sdkNamespace("popups")) return null;
+    try {
+        const state = await withTimeout(RundotGameAPI.popups.getLikeState(), 3_000, "like state");
+        if (state.isLiked) return { shown: false, liked: true, dismissed: false, reason: "already_liked" };
+        const availability = await withTimeout(RundotGameAPI.popups.canShowLikeDialog(), 3_000, "like availability");
+        if (!availability.available) return { shown: false, liked: false, dismissed: false, reason: "unavailable" };
+        const result = await withTimeout(RundotGameAPI.popups.showLikeDialog(), 15_000, "like prompt");
+        return result.shown
+            ? { shown: true, liked: result.liked, dismissed: result.dismissed, reason: null }
+            : { shown: false, liked: false, dismissed: false, reason: result.reason };
+    } catch (error) {
+        console.warn("[run-sdk] like prompt failed", error);
+        return null;
+    }
+}
+
 export function getRunCapabilities(): Readonly<RunCapabilities> {
+    return capabilities;
+}
+
+/**
+ * Re-read host capabilities. Wired to onAwake (the SDK's "refresh stale data"
+ * hook) so a session that started before a grant or attach does not stay
+ * frozen on its boot snapshot.
+ */
+export function refreshRunCapabilities(): Readonly<RunCapabilities> {
+    capabilities = snapshotCapabilities();
     return capabilities;
 }
 
@@ -199,8 +279,32 @@ export async function initSdk(): Promise<boolean> {
     capabilities = snapshotCapabilities();
     if (!_ready) {
         console.info("[runSdk] RUN host unavailable; using local non-authoritative fallbacks");
+        // Inside an iframe the host is expected — a cold WebView can simply be
+        // slower than the bounded handshake. Keep watching so a late attach
+        // upgrades this session instead of stranding it offline until relaunch.
+        if (embedded) watchForLateHostAttach();
     }
     return _ready;
+}
+
+function watchForLateHostAttach(): void {
+    const deadline = performance.now() + 30_000;
+    const watcher = window.setInterval(() => {
+        try {
+            if (RundotGameAPI.isAvailable() || RundotGameAPI.isMock()) {
+                window.clearInterval(watcher);
+                _ready = true;
+                capabilities = snapshotCapabilities();
+                applyRunSafeArea();
+                console.info("[runSdk] RUN host attached after the boot handshake; capabilities refreshed");
+                return;
+            }
+        } catch {
+            window.clearInterval(watcher);
+            return;
+        }
+        if (performance.now() >= deadline) window.clearInterval(watcher);
+    }, 500);
 }
 
 export async function readAppStorage(key: string): Promise<{ ok: boolean; value: string | null }> {
@@ -262,7 +366,9 @@ export async function setNotificationPreference(enabled: boolean): Promise<Notif
 export type HapticStyle = "light" | "medium" | "heavy" | "success" | "warning" | "error";
 
 export async function triggerHaptic(style: HapticStyle): Promise<boolean> {
-    if (capabilities.haptics) {
+    // Live read, not the boot snapshot: the system haptics setting can change
+    // mid-session and must take effect on the next trigger.
+    if (hapticsAvailableNow()) {
         try {
             const map: Record<HapticStyle, HapticFeedbackStyle> = {
                 light: HapticFeedbackStyle.Light,

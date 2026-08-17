@@ -12,6 +12,7 @@ import {
     getRunCapabilities,
     initSdk,
     readAttribution,
+    refreshRunCapabilities,
     registerLifecycles,
     requestHostExit,
 } from "./sdk/runSdk.ts";
@@ -46,6 +47,10 @@ function setBootProgress(progress: number): void {
 }
 
 analytics.installErrorCapture();
+// The browser's own end-of-session signals. onQuit alone produced two
+// session_end events across the whole fleet in thirty days, because it
+// needs a clean host quit and players just close the tab.
+analytics.installSessionEndCapture();
 analytics.funnelStep("load", 1);
 
 async function boot(): Promise<void> {
@@ -98,6 +103,9 @@ async function boot(): Promise<void> {
         },
         onAwake: () => {
             setHostPaused("host_sleep", false);
+            // onAwake is the SDK's "refresh stale data" hook; a long suspend
+            // can span a settings change or a delayed host attach.
+            refreshRunCapabilities();
             runtimeServices.resume();
             void reconcilePendingPurchase();
         },
@@ -125,7 +133,6 @@ async function boot(): Promise<void> {
     runtimeServices.bootstrap();
     analytics.funnelStep("ftue", 1);
     analytics.funnelStep("ftue", 2);
-    analytics.funnelStep("onboarding", 1);
     analytics.sessionStart(store.get().levelsCompleted === 0, await readAttribution());
 
     const { resolveReturnNotificationLaunch, refreshReturnNotifications } = await import(

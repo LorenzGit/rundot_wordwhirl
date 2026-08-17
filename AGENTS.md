@@ -14,3 +14,13 @@ PixiJS 8 WebGPU-first with WebGL fallback, and RUN SDK 5.24.
 - Verify with `npm run check` and `npm run visual-qa`.
 - After UI/art changes, apply the workspace UI/art QA gate to fresh captures.
 - The placeholder `gameId` may remain until the owner authorizes `rundot init`.
+
+## One version
+
+`package.json` is the single version number: the menu renders it and every analytics
+event is tagged with it as `build_version`. Once published it must equal the version
+RUN serves on the Public tag — never pin it to a separate development track.
+`rundot deploy --bump <Major|Minor|Patch>` decides the number; set `package.json` and
+`package-lock.json` to it in the same commit as the ship, then verify with
+`npm run version:check` (unpublished games pass; needs network, so it sits outside
+`npm run check`).

@@ -3,6 +3,7 @@ import { store } from "../state/store.ts";
 import { analytics } from "./analytics/analyticsConfig.ts";
 import { createLevelAnalytics } from "./levelAnalytics.ts";
 import { runtimeServices } from "./runtimeServices.ts";
+import { submitLeaderboardScore } from "../sdk/runSdk.ts";
 
 let gestureRecorded = false;
 let letterSelectRecorded = false;
@@ -41,9 +42,6 @@ export function startWordwhirlLevel(): void {
     const state = store.get();
     const level = levelForNumber(state.level);
     if (state.levelsCompleted === 0) analytics.funnelStep("ftue", 3, { level_id: level.id });
-    if (state.level === 1) analytics.funnelStep("onboarding", 6, { level_id: level.id });
-    if (state.level === 2) analytics.funnelStep("onboarding", 15, { level_id: level.id });
-    if (state.level === 3) analytics.funnelStep("onboarding", 18, { level_id: level.id });
 
     wordwhirlLevelAnalytics.start({
         level: state.level,
@@ -55,37 +53,35 @@ export function startWordwhirlLevel(): void {
         hints_stock: state.hints,
     });
 
-    analytics.event("level_enter", {
+    analytics.event("level_started", {
         ...levelContext(),
         resume: state.currentFoundWords.length > 0 || state.revealedCells.length > 0,
     });
 }
 
 export function recordMenuReady(): void {
-    analytics.funnelStep("onboarding", 2);
+    analytics.funnelStep("ftue_v2", 1);
+    // Canonical onboarding beat. The ftue_v2 funnel above travels a separate
+    // pipeline that RUN's core-loop query cannot read.
+    if (store.get().levelsCompleted === 0) analytics.event("ftue_started", { entry: "menu" });
     analytics.event("menu_ready", { levels_completed: store.get().levelsCompleted });
 }
 
 export function recordScreenView(screen: string): void {
-    analytics.event("screen_view", { screen });
-    if (screen === "how-to") analytics.funnelStep("onboarding", 3);
-    if (screen === "route") analytics.funnelStep("onboarding", 4);
+    analytics.event("screen_viewed", { screen });
     if (screen === "shop") {
-        analytics.funnelStep("onboarding", 24);
         analytics.funnelStep("purchase", 1);
-        analytics.funnelStep("hint_refill", 4);
+        analytics.funnelStep("hint_purchase", 1);
         analytics.event("shop_opened", levelContext());
     }
-    if (screen === "settings") analytics.funnelStep("onboarding", 26);
 }
 
 export function recordPlayTapped(): void {
-    analytics.funnelStep("onboarding", 5);
+    analytics.funnelStep("ftue_v2", 2);
     analytics.event("play_tapped", levelContext());
 }
 
 export function recordTutorialShown(): void {
-    analytics.funnelStep("onboarding", 7);
     analytics.event("tutorial_bubble_shown", { level: 1 });
 }
 
@@ -96,7 +92,7 @@ export function recordCompassGesture(): void {
     if (store.get().levelsCompleted === 0) analytics.funnelStep("ftue", 4);
     if (!letterSelectRecorded) {
         letterSelectRecorded = true;
-        analytics.funnelStep("onboarding", 8);
+        analytics.funnelStep("ftue_v2", 3);
         analytics.event("first_letter_selected", levelContext());
     }
 }
@@ -104,7 +100,6 @@ export function recordCompassGesture(): void {
 export function recordWordSubmitted(wordLength: number): void {
     if (!wordSubmitRecorded && store.get().level === 1) {
         wordSubmitRecorded = true;
-        analytics.funnelStep("onboarding", 9);
     }
     analytics.event("word_submitted", {
         ...levelContext(),
@@ -125,10 +120,7 @@ export function recordAcceptedWord(wordLength: number): void {
     });
     if (state.levelsCompleted === 0 && state.currentFoundWords.length === 0) {
         analytics.funnelStep("ftue", 5);
-        analytics.funnelStep("onboarding", 10);
-    }
-    if (state.level === 2 && state.currentFoundWords.length === 0) {
-        analytics.funnelStep("onboarding", 16);
+        analytics.funnelStep("ftue_v2", 4);
     }
 }
 
@@ -157,14 +149,12 @@ export function recordDuplicateWord(wordLength: number): void {
 export function recordShuffle(): void {
     if (!shuffleRecorded) {
         shuffleRecorded = true;
-        analytics.funnelStep("onboarding", 20);
     }
     analytics.event("shuffle_used", levelContext());
     wordwhirlLevelAnalytics.checkpoint("shuffle_used");
 }
 
 export function recordHintUsed(source: string, stockLeft: number): void {
-    if (store.get().hintsUsed === 0) analytics.funnelStep("onboarding", 19);
     analytics.event("hint_used", {
         ...levelContext(),
         source,
@@ -174,21 +164,18 @@ export function recordHintUsed(source: string, stockLeft: number): void {
 }
 
 export function recordHintStockEmpty(): void {
-    analytics.funnelStep("onboarding", 21);
-    analytics.funnelStep("hint_refill", 1);
+    analytics.funnelStep("hint_ad_refill", 1);
     analytics.event("hint_stock_empty", levelContext());
 }
 
 export function recordHintAdOffered(): void {
-    analytics.funnelStep("onboarding", 22);
-    analytics.funnelStep("hint_refill", 2);
+    analytics.funnelStep("hint_ad_refill", 2);
     analytics.event("hint_ad_offered", levelContext());
 }
 
 export function recordHintAdResult(result: string, stockAfter: number): void {
     if (result === "verified") {
-        analytics.funnelStep("onboarding", 23);
-        analytics.funnelStep("hint_refill", 3);
+        analytics.funnelStep("hint_ad_refill", 3);
     }
     analytics.event("hint_ad_result", {
         ...levelContext(),
@@ -198,9 +185,8 @@ export function recordHintAdResult(result: string, stockAfter: number): void {
 }
 
 export function recordHintPackSelected(): void {
-    analytics.funnelStep("onboarding", 25);
     analytics.funnelStep("purchase", 2);
-    analytics.funnelStep("hint_refill", 4);
+    analytics.funnelStep("hint_purchase", 2);
     analytics.event("hint_pack_selected", levelContext());
 }
 
@@ -211,7 +197,7 @@ export function recordPurchaseFunnel(
 ): void {
     analytics.funnelStep("purchase", step, { product_id: productId, ...extra });
     if (step === 4 && productId === "hint_pack") {
-        analytics.funnelStep("hint_refill", 5);
+        analytics.funnelStep("hint_purchase", 3);
         analytics.event("hint_pack_purchased", { ...levelContext(), ...extra });
     }
 }
@@ -219,18 +205,21 @@ export function recordPurchaseFunnel(
 export function completeWordwhirlLevel(hintsUsed: number, invalidAttempts: number, bonusWords: number): void {
     const state = store.get();
     const level = levelForNumber(state.level);
-    if (state.levelsCompleted === 0) {
+    if (state.level === 1) {
         analytics.funnelStep("ftue", 6);
-        analytics.funnelStep("onboarding", 11);
+        analytics.funnelStep("ftue_v2", 5);
+        // Clearing level 1 IS finishing onboarding here — there is no separate
+        // tutorial sequence to dismiss.
+        analytics.event("ftue_completed", { level_id: level.id });
     }
-    if (state.levelsCompleted === 1) {
+    if (state.level === 2) {
         analytics.funnelStep("ftue", 7);
-        analytics.funnelStep("onboarding", 17);
+        analytics.funnelStep("ftue_v2", 7);
     }
     analytics.funnelStep("engagement", Math.min(12, state.level), { level_id: level.id });
 
     const perfect = invalidAttempts === 0 && hintsUsed === 0;
-    wordwhirlLevelAnalytics.complete({
+    const metrics = wordwhirlLevelAnalytics.complete({
         hints_used: hintsUsed,
         invalid_attempts: invalidAttempts,
         bonus_words: bonusWords,
@@ -239,7 +228,7 @@ export function completeWordwhirlLevel(hintsUsed: number, invalidAttempts: numbe
         hints_stock: state.hints,
     });
 
-    analytics.event("level_clear_stats", {
+    analytics.event("level_completed", {
         ...levelContext(),
         hints_used: hintsUsed,
         invalid_attempts: invalidAttempts,
@@ -261,23 +250,39 @@ export function completeWordwhirlLevel(hintsUsed: number, invalidAttempts: numbe
             route: level.route,
             level_id: level.id,
         });
+        const score = state.levelsCompleted * 1_000 + state.lifetimeWords;
+        void submitLeaderboardScore({
+            score,
+            durationSeconds: metrics?.duration_seconds ?? 1,
+            metadata: {
+                levels_completed: state.levelsCompleted,
+                lifetime_words: state.lifetimeWords,
+                route_loops: state.routeLoops,
+            },
+        }).then((result) => {
+            analytics.event("leaderboard_score_submitted", {
+                score,
+                accepted: result?.accepted ?? false,
+                rank: result?.rank ?? 0,
+                reason: result?.reason ?? (result ? "unknown" : "unavailable"),
+            });
+            if (result?.accepted && result.rank) store.patch({ toast: `ROUTE RANK · #${result.rank}` });
+        });
     }
 }
 
 export function recordResultsCelebrateShown(): void {
     if (celebrateRecorded) return;
     celebrateRecorded = true;
-    analytics.funnelStep("onboarding", 12);
     analytics.event("results_celebrate_shown", levelContext());
 }
 
 export function recordResultsCardOpened(): void {
-    analytics.funnelStep("onboarding", 13);
     analytics.event("results_card_opened", levelContext());
 }
 
 export function recordResultsContinue(): void {
-    analytics.funnelStep("onboarding", 14);
+    if (store.get().level === 1) analytics.funnelStep("ftue_v2", 6);
     analytics.event("results_continue", levelContext());
 }
 

@@ -19,7 +19,8 @@ type RendererPreference = "webgpu" | "webgl";
 let webGpuProvenBroken = false;
 
 function rendererBackend(app: Application): RendererPreference {
-    return app.renderer.constructor.name.toLowerCase().includes("webgpu") ? "webgpu" : "webgl";
+    // renderer.name is the literal backend string; constructor.name breaks under minification.
+    return app.renderer.name.toLowerCase().includes("webgpu") ? "webgpu" : "webgl";
 }
 
 async function initializeRenderer(

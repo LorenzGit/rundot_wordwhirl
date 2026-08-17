@@ -113,13 +113,17 @@ export default function App() {
 
 function Toast() {
     const toast = useStore((state) => state.toast);
+    const seq = useStore((state) => state.toastSeq);
     useEffect(() => {
         if (!toast) return;
         const timeout = window.setTimeout(() => {
-            if (store.get().toast === toast) store.patch({ toast: null });
+            // Do not let an older toast's timer dismiss a newer message. The
+            // seq comparison (not the text) keeps a repeated identical toast
+            // alive for its own full duration.
+            if (store.get().toastSeq === seq) store.patch({ toast: null });
         }, TOAST_HIDE_MS);
         return () => window.clearTimeout(timeout);
-    }, [toast]);
+    }, [toast, seq]);
     if (!toast) return null;
     return (
         <button type="button" className="toast" aria-live="polite" onClick={() => store.patch({ toast: null })}>

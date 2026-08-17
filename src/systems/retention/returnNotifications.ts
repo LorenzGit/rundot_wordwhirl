@@ -29,8 +29,8 @@ export interface ReturnReminder {
 export const RETURN_REMINDERS: readonly ReturnReminder[] = Object.freeze([
     {
         id: "ww_return_24h",
-        title: "The sky is waiting",
-        body: "Your next Wordwhirl current is ready — clear another sky.",
+        title: "Your daily hints are ready",
+        body: "Claim today’s hint gift, then clear another Wordwhirl sky.",
         delaySeconds: DAY,
     },
     {
@@ -54,8 +54,17 @@ function optedIn(): boolean {
 /** Enable/disable platform local notifications and cancel everything on opt-out. */
 export async function setNotificationsOptIn(enabled: boolean): Promise<NotificationPreferenceResult> {
     store.patch({ notificationsEnabled: enabled });
-    const result = await setNotificationPreference(enabled);
-    if (!enabled || result === "disabled" || result === "unavailable" || result === "failed") {
+    // Turning off is game-local. The host preference is the RUN app's and every
+    // game shares it, so `setNotificationPreference(false)` here would silence
+    // reminders in all of them — a player switching WORDWHIRL's off means
+    // WORDWHIRL, not the platform.
+    if (!enabled) {
+        await cancelAllReturnNotifications();
+        runtimeServices.track("notifications_pref_changed", { enabled, result: "disabled" });
+        return "disabled";
+    }
+    const result = await setNotificationPreference(true);
+    if (result === "disabled" || result === "unavailable" || result === "failed") {
         await cancelAllReturnNotifications();
     } else {
         await refreshReturnNotifications("opt_in");

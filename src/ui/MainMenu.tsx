@@ -5,6 +5,7 @@ import { levelForNumber } from "../game/words/levels.ts";
 import { recordMenuReady, recordScreenView } from "../systems/gameAnalytics.ts";
 import { formatNumber } from "../systems/localization.ts";
 import { store, useStore } from "../state/store.ts";
+import { dailyHints } from "../systems/retention/dailyHints.ts";
 
 type IconName = "route" | "shop" | "how" | "settings";
 
@@ -29,6 +30,7 @@ export default function MainMenu() {
     const state = useStore((value) => value);
     const level = levelForNumber(state.level);
     const resume = state.currentFoundWords.length > 0 || state.revealedCells.length > 0;
+    const daily = dailyHints.view();
     useEffect(() => {
         recordMenuReady();
         recordScreenView("main");
@@ -53,11 +55,38 @@ export default function MainMenu() {
                     <span>{level.route}</span>
                     <strong>{level.title}</strong>
                 </div>
-                <div className="spark-balance">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z" />
-                    </svg>
-                    {formatNumber(state.sparks)}
+                <div className="menu-summary-actions">
+                    <button
+                        type="button"
+                        className="daily-hint-button"
+                        disabled={!daily.ready || daily.claimed}
+                        onClick={async () => {
+                            const result = await dailyHints.claim();
+                            store.patch({
+                                toast: result.ok
+                                    ? `DAY ${daily.streak} · +${result.reward} HINT${result.reward === 1 ? "" : "S"}`
+                                    : result.reason,
+                            });
+                        }}
+                        aria-label={
+                            daily.claimed
+                                ? `Daily hint claimed, day ${daily.streak}`
+                                : `Claim ${daily.reward} daily hints, day ${daily.streak}`
+                        }
+                    >
+                        <span>DAY {formatNumber(daily.streak)}</span>
+                        <strong>
+                            {daily.claimed
+                                ? "CLAIMED"
+                                : `+${formatNumber(daily.reward)} HINT${daily.reward === 1 ? "" : "S"}`}
+                        </strong>
+                    </button>
+                    <div className="spark-balance">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z" />
+                        </svg>
+                        {formatNumber(state.sparks)}
+                    </div>
                 </div>
             </section>
 

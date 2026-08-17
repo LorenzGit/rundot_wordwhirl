@@ -1,6 +1,6 @@
 {
   "name": "wordwhirl",
-  "version": "1.4.2",
+  "version": "1.4.7",
   "description": "WORDWHIRL — a portrait swipe-word adventure for RUN.world, built with PixiJS 8 and a WebGPU-first renderer.",
   "private": true,
   "license": "SEE LICENSE IN LICENSE.md",
@@ -16,6 +16,7 @@
     "protobufjs": false
   },
   "scripts": {
+    "version:check": "node scripts/check-deployed-version.mjs",
     "dev": "vite",
     "dev:playground": "cross-env RUNDOT_PLAYGROUND=1 vite",
     "format": "biome format --write .",

@@ -47,6 +47,11 @@ export interface AppState {
     invalidAttempts: number;
     adHintDay: string | null;
     adHintsToday: number;
+    dailyRewardLastClaimDay: string | null;
+    dailyRewardStreak: number;
+    dailyRewardClaimIds: string[];
+    likePrompted: boolean;
+    analyticsFunnelMarks: string[];
 
     musicEnabled: boolean;
     musicVolume: number;
@@ -67,6 +72,12 @@ export interface AppState {
     wordFeedback: WordFeedback | null;
     hintBusy: boolean;
     toast: string | null;
+    /**
+     * Bumped every time a toast is SET (see store.patch). Keying on the text
+     * alone breaks when the same message fires twice: the snapshot compares
+     * equal, React skips the re-render, and the first timer kills the second.
+     */
+    toastSeq: number;
     runtimeReady: boolean;
     runtimeConfigVersion: string | null;
     trustedTimeReady: boolean;
@@ -97,6 +108,11 @@ let state: AppState = {
     invalidAttempts: 0,
     adHintDay: null,
     adHintsToday: 0,
+    dailyRewardLastClaimDay: null,
+    dailyRewardStreak: 0,
+    dailyRewardClaimIds: [],
+    likePrompted: false,
+    analyticsFunnelMarks: [],
 
     musicEnabled: true,
     musicVolume: 0.34,
@@ -116,6 +132,7 @@ let state: AppState = {
     wordFeedback: null,
     hintBusy: false,
     toast: null,
+    toastSeq: 0,
     runtimeReady: false,
     runtimeConfigVersion: null,
     trustedTimeReady: false,
@@ -126,7 +143,12 @@ export const store = {
         return state;
     },
     patch(partial: Partial<AppState>): void {
-        state = { ...state, ...partial };
+        // Stamp toastSeq whenever a toast is set so every producer gets the
+        // repeat-safe behavior without changing its call site.
+        state =
+            typeof partial.toast === "string"
+                ? { ...state, ...partial, toastSeq: state.toastSeq + 1 }
+                : { ...state, ...partial };
         for (const listener of listeners) listener();
     },
     subscribe(listener: () => void): () => void {

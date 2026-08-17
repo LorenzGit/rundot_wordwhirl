@@ -258,6 +258,36 @@ svg {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.menu-summary-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 10px;
+}
+.daily-hint-button {
+    display: flex;
+    min-width: 86px;
+    min-height: 44px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(216, 255, 240, 0.28);
+    border-radius: 13px;
+    background: rgba(135, 236, 198, 0.13);
+    color: var(--paper);
+}
+.daily-hint-button span {
+    font-size: 10px;
+}
+.daily-hint-button strong {
+    max-width: none;
+    color: var(--paper);
+    font-size: 12px;
+    line-height: 1.15;
+}
+.daily-hint-button:disabled {
+    opacity: 0.58;
+}
 .spark-balance {
     display: flex;
     flex: 0 0 auto;

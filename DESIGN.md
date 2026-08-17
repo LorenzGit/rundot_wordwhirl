@@ -4,6 +4,11 @@
 
 ## Game
 
+- Level 11 keeps one aspirational six-letter answer while moving the harder `DANGER` and `GRADE` anagrams to bonus play; the required path is `GARDEN`, `RANGE`, `DEAR`, `DARE`.
+- Daily return value is a non-punitive seven-day hint cycle: `1, 1, 1, 2, 1, 2, 3`. Missing a day resets the reward index but never removes progress.
+- Every three cleared levels submits the monotonic leaderboard score `levelsCompleted × 1000 + lifetimeWords`; the active level duration is included for validation.
+- The platform Like dialog may appear once after the first three-level milestone, never on load or inside a loop.
+
 - Player fantasy / audience / orientation / session: restore words to a storm-tossed sky atlas; casual word-puzzle players; portrait-first; 2–5 minute sessions.
 - Core loop / first action: drag through the letter compass to form a word, place it in the compact crossword, collect Sparks from extra words, then ride the cleared windway onward.
 - First 10 minutes: level 1 teaches one three-letter swipe; levels 2–3 stay on three-letter crossings; levels 4–6 introduce four-letter words; free-hint value shows once the player has a few clears; an invalid word is a soft wobble with instant retry.

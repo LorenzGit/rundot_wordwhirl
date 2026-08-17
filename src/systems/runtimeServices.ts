@@ -1,6 +1,13 @@
 import packageJson from "../../package.json";
 import { PLATFORM_IDS, isConfiguredPlatformId } from "../config/platform.ts";
-import { fetchLiveOps, recordAnalytics, recordFunnelStep, triggerHaptic, type HapticStyle } from "../sdk/runSdk.ts";
+import {
+    fetchLiveOps,
+    getRunCapabilities,
+    recordAnalytics,
+    recordFunnelStep,
+    triggerHaptic,
+    type HapticStyle,
+} from "../sdk/runSdk.ts";
 import { store } from "../state/store.ts";
 import { refreshServerTime } from "./serverTime.ts";
 
@@ -41,8 +48,14 @@ async function refresh(): Promise<void> {
     clearRefresh();
     const [liveOps, trustedTimeReady] = await Promise.all([fetchLiveOps(), refreshServerTime()]);
     if (!liveOps) {
-        config = { ...DEFAULTS };
-        store.patch({ runtimeReady: true, runtimeConfigVersion: null, trustedTimeReady });
+        // KEEP the live config on a failed fetch: resetting to DEFAULTS here
+        // yanked an enabled shop/ads surface for the rest of the session on a
+        // single resume-time network blip. Retry only where a host could
+        // actually answer — without the capability this null is permanent.
+        store.patch({ runtimeReady: true, trustedTimeReady });
+        if (getRunCapabilities().liveops) {
+            nextRefreshTimer = window.setTimeout(() => void refresh(), 60_000);
+        }
         return;
     }
     config = normalize(liveOps.values);
@@ -60,6 +73,9 @@ export const runtimeServices = {
     bootstrap(): void {
         void refresh();
         this.track("game_boot", { version: packageJson.version });
+        // Canonical core-loop name RUN's query filters on. The `game_loaded`
+        // funnel step keeps its shipped name; this is the queryable event.
+        this.track("game_opened", { version: packageJson.version });
     },
     resume(): void {
         void refresh();
