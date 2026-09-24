@@ -23,7 +23,7 @@
     "format:check": "biome format .",
     "lint": "biome lint src scripts vite.config.js --diagnostic-level=error --max-diagnostics=none",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/test-noise-random.mjs && node scripts/check-player-number-formatting.mjs && node --experimental-strip-types scripts/test-checkout-classification.ts && node --experimental-strip-types scripts/test-purchase-coordinator.ts && node --experimental-strip-types scripts/test-hint-completion.ts && node --experimental-strip-types scripts/simulate-wordwhirl.ts && node scripts/check-game.mjs",
+    "test": "node scripts/test-noise-random.mjs && node scripts/check-player-number-formatting.mjs && node --experimental-strip-types scripts/test-checkout-classification.ts && node --experimental-strip-types scripts/test-purchase-coordinator.ts && node --experimental-strip-types scripts/test-hint-completion.ts && node --experimental-strip-types scripts/simulate-wordwhirl.ts && node --experimental-strip-types --experimental-test-module-mocks --no-warnings scripts/test-save-guard.ts && node scripts/check-game.mjs",
     "words:sync": "node scripts/sync-safe-words.mjs",
     "wheels:build": "node --experimental-strip-types scripts/build-wheels.ts",
     "simulate": "node --experimental-strip-types scripts/simulate-wordwhirl.ts",

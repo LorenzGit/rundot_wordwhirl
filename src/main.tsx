@@ -65,19 +65,17 @@ async function boot(): Promise<void> {
     );
 
     setBootProgress(0.05);
-    await Promise.all([
-        initSdk().then(() => {
-            analytics.markTransportReady();
-            analytics.funnelStep("load", 2, { host: getRunCapabilities().host });
-            applyRunSafeArea();
-        }),
-        saveSystem.load().then(() => {
-            document.documentElement.dataset.reducedMotion = String(store.get().reducedMotion);
-            document.documentElement.dataset.quality = store.get().quality;
-            audioManager.bind();
-            analytics.funnelStep("load", 3);
-        }),
-    ]);
+    // SDK, then save: before the handshake the host looks absent and load()
+    // would read localStorage while later writes go to the player's cloud save.
+    await initSdk();
+    analytics.markTransportReady();
+    analytics.funnelStep("load", 2, { host: getRunCapabilities().host });
+    applyRunSafeArea();
+    await saveSystem.load();
+    document.documentElement.dataset.reducedMotion = String(store.get().reducedMotion);
+    document.documentElement.dataset.quality = store.get().quality;
+    audioManager.bind();
+    analytics.funnelStep("load", 3);
     setBootProgress(0.15);
     await warmAssets((progress) => setBootProgress(0.15 + progress * 0.85));
     setBootProgress(1);
